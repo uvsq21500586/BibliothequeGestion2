@@ -5,6 +5,12 @@ import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -16,13 +22,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import graphique.pannels.Filtre;
+import net.proteanit.sql.DbUtils;
 
 public class Catalogue {
 
 	public JFrame frameCatalogue;
-	private JTable table;
+	private static JTable tableDocuments;
 	private JButton buttonAjoutFiltre;
 	private JButton buttonRetour;
 	private JPanel panelFiltres;
@@ -32,6 +40,7 @@ public class Catalogue {
 	private JButton buttonModifier;
 	public int nbfiltres;
 	public ArrayList<Filtre> listeFiltres;
+	public static boolean tableDocumentsVide = true;
 
 	/**
 	 * Launch the application.
@@ -74,8 +83,8 @@ public class Catalogue {
 		scrollPane.setBounds(400, 33, 259, 251);
 		frameCatalogue.getContentPane().add(scrollPane);
 
-		table = new JTable();
-		scrollPane.setViewportView(table);
+		tableDocuments = new JTable();
+		scrollPane.setViewportView(tableDocuments);
 
 		buttonRetour = new JButton("Retour");
 		buttonRetour.addActionListener(new ActionListener() {
@@ -98,6 +107,7 @@ public class Catalogue {
 		panelFiltres.setLayout(null);
 
 		buttonAjoutFiltre = new JButton("Ajouter un filtre");
+		Catalogue catalogue = this;
 		buttonAjoutFiltre.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/*
@@ -105,13 +115,13 @@ public class Catalogue {
 				 * "Choisissez un filtre à ajouter:", "Choix filtre",
 				 * JOptionPane.QUESTION_MESSAGE);
 				 */
-				String[] choixfiltres = { "Titre", "Sous-titre" };
+				String[] choixfiltres = { "titre", "soustitre", "typedocument" };
 				String filtrechoisi = JOptionPane.showInputDialog(frameCatalogue, "Choisissez un filtre à ajouter:",
 						"Choix filtre", JOptionPane.QUESTION_MESSAGE, null,
 						// les possibilités
 						choixfiltres, "Titre").toString();
 				System.out.println(filtrechoisi);
-				Filtre filtre = new Filtre(panelFiltres, listeFiltres.size(), filtrechoisi);
+				Filtre filtre = new Filtre(catalogue, panelFiltres, listeFiltres.size(), filtrechoisi);
 				listeFiltres.add(filtre);
 			}
 		});
@@ -143,5 +153,57 @@ public class Catalogue {
 		frameCatalogue.setTitle("Catalogue");
 		frameCatalogue.setBounds(100, 100, 700, 331);
 		frameCatalogue.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		afficherDocuments();
+	}
+
+	public static void afficherDocuments() {
+		String connectionstring = "jdbc:sqlserver://LAPTOP-DO4863GA\\SQLEXPRESS;" + "databaseName=Pgi;"
+				+ "user=sa;password=sa";
+		Connection con = null;
+		try {
+			con = DriverManager.getConnection(connectionstring);
+			System.out.println("Connection reussie");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		Statement stm = null;
+		try {
+			stm = con.createStatement();
+			System.out.println("Statement reussi");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		String query = "select * from Documents";
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				tableDocuments.setModel(DbUtils.resultSetToTableModel(rs));
+				tableDocumentsVide = false;
+			} else {
+				// tableau vide
+				String tabColumn[] = new String[rsmd.getColumnCount()];
+				for (int i = 0; i < rsmd.getColumnCount(); i++) {
+					tabColumn[i] = rsmd.getColumnName(i + 1);
+				}
+				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
+				tableDocuments.setModel(model);
+				tableDocumentsVide = true;
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+		}
 	}
 }
