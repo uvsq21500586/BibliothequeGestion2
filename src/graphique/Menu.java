@@ -13,10 +13,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
 public class Menu {
+
+	public String statut = "adherant";
 
 	public JFrame frameMenu;
 
@@ -71,13 +72,11 @@ public class Menu {
 		buttonCatalogue.setIcon(image);
 
 		JButton buttonMessages = new JButton("Messages");
-		JFrame m = new JFrame("Bienvenu au messagerie");
-		m.setSize(400, 200);
 		buttonMessages.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				m.getContentPane().add(buttonMessages);
-				m.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				m.setVisible(true);
+				Messagerie me = new Messagerie();
+				me.frameMessagerie.setVisible(true);
+
 			}
 		});
 		buttonMessages.setBounds(10, 152, 150, 21);
@@ -85,15 +84,11 @@ public class Menu {
 		image = new ImageIcon((new ImageIcon("images/messagerie.png")).getImage()
 				.getScaledInstance(buttonMessages.getHeight(), buttonMessages.getHeight(), Image.SCALE_DEFAULT));
 		buttonMessages.setIcon(image);
-
 		JButton buttonStatistiques = new JButton("Statistiques");
-		JFrame s = new JFrame("Bienvenu au Statistique");
-		s.setSize(400, 200);
 		buttonStatistiques.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				s.getContentPane().add(buttonStatistiques);
-				s.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				s.setVisible(true);
+				Statistiques Se = new Statistiques();
+				Se.frmStatistiques.setVisible(true);
 			}
 		});
 		buttonStatistiques.setBounds(10, 90, 150, 21);
@@ -103,23 +98,27 @@ public class Menu {
 		buttonStatistiques.setIcon(image);
 
 		JButton buttonEmprunts = new JButton("Emprunts");
-		JFrame em = new JFrame("Bienvenu au Statistique");
-		em.setSize(400, 200);
+
 		buttonEmprunts.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				em.getContentPane().add(buttonEmprunts);
-				em.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				em.setVisible(true);
+				if (statut.equals("adherant")) {
+					AdhérantEmprunt adherentEmprunt = new AdhérantEmprunt();
+					adherentEmprunt.frmGestionemprunt.setVisible(true);
+				} else {
+					Emprunt emprunt = new Emprunt();
+					emprunt.GESTON_EMPRUNTS.setVisible(true);
+				}
 			}
 		});
 
 		buttonEmprunts.setBounds(10, 121, 150, 21);
 		frameMenu.getContentPane().add(buttonEmprunts);
 
-		JButton buttonDeconnexion = new JButton("D\u00E9connexion");
+		JButton buttonDeconnexion = new JButton("Déconnexion");
 		buttonDeconnexion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				frameMenu.dispose();
+				Authentification.main(null);
 			}
 		});
 		buttonDeconnexion.setMargin(new Insets(2, 5, 2, 5));
@@ -131,34 +130,29 @@ public class Menu {
 
 		JPanel panelGerant = new JPanel();
 		panelGerant.setBorder(
-				new TitledBorder(null, "G\u00E9rant uniquement", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				new TitledBorder(null, "Gérant uniquement", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelGerant.setBackground(new Color(102, 205, 170));
 		panelGerant.setBounds(211, 47, 215, 100);
 		frameMenu.getContentPane().add(panelGerant);
 		panelGerant.setLayout(null);
-
+		if (statut.equals("adherant")) {
+			panelGerant.setVisible(false);
+		}
 		JButton buttonGestionLogins = new JButton("Gestion logins");
-		JFrame g = new JFrame("Bienvenu au Gestion logins");
-		g.setSize(400, 200);
 		buttonGestionLogins.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				g.getContentPane().add(buttonGestionLogins);
-				g.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				g.setVisible(true);
-
+				Gérant fenetreGerant = new Gérant();
+				fenetreGerant.frmGestions.setVisible(true);
 			}
 		});
 		buttonGestionLogins.setBounds(20, 22, 185, 21);
 		panelGerant.add(buttonGestionLogins);
 
 		JButton buttonGestionDocuments = new JButton("Gestion des documents");
-		JFrame d = new JFrame("Bienvenu Gestion des documents");
-		d.setSize(400, 200);
 		buttonGestionDocuments.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				d.getContentPane().add(buttonGestionDocuments);
-				d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-				d.setVisible(true);
+				AjoutDoc fenetreGerant = new AjoutDoc();
+				fenetreGerant.frame.setVisible(true);
 			}
 		});
 		buttonGestionDocuments.setBounds(20, 62, 185, 21);

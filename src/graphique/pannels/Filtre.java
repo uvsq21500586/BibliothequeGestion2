@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,6 +16,7 @@ import javax.swing.border.TitledBorder;
 
 import graphique.Catalogue;
 
+@SuppressWarnings("serial")
 public class Filtre extends JPanel {
 
 	private int id;
@@ -44,16 +47,18 @@ public class Filtre extends JPanel {
 		buttonSupprimer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				panelFiltres.remove(filtre);
-				catalogue.listeFiltres.remove(id);
-				for (int i = id; i < catalogue.listeFiltres.size(); i++) {
-					Filtre filtredecale = catalogue.listeFiltres.get(i);
+				Catalogue.listeFiltres.remove(id);
+
+				for (int i = id; i < Catalogue.listeFiltres.size(); i++) {
+					Filtre filtredecale = Catalogue.listeFiltres.get(i);
 					filtredecale.setId(i);
 					filtredecale.placerPanel();
 				}
-
+				panelFiltres.revalidate();
+				panelFiltres.repaint();
+				Catalogue.afficherDocuments();
 			}
 		});
-
 	}
 
 	public void placerPanel() {
@@ -67,10 +72,50 @@ public class Filtre extends JPanel {
 		case "titre":
 			champ = new JTextArea();
 			add(champ);
+			champ.addKeyListener(new KeyListener() {
+
+				@Override
+				public void keyPressed(KeyEvent e) {
+
+				}
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					// TODO Auto-generated method stub
+					Catalogue.afficherDocuments();
+				}
+
+			});
 			break;
 		case "soustitre":
 			champ = new JTextArea();
 			add(champ);
+			champ.addKeyListener(new KeyListener() {
+
+				@Override
+				public void keyPressed(KeyEvent e) {
+
+				}
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					// TODO Auto-generated method stub
+					Catalogue.afficherDocuments();
+				}
+
+			});
 			break;
 		case "typedocument":
 			listechoix = new JComboBox<String>();
@@ -83,6 +128,11 @@ public class Filtre extends JPanel {
 			listechoix.addItem("Bd");
 			listechoix.addItem("Volume");
 			listechoix.addItem("Journal");
+			listechoix.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Catalogue.afficherDocuments();
+				}
+			});
 			break;
 		}
 
@@ -101,6 +151,18 @@ public class Filtre extends JPanel {
 			listechoix.setBounds(15, 15, 100, 20);
 			break;
 		}
+	}
+
+	public String valeur() {
+		switch (filtrechoisi) {
+		case "titre":
+			return "like '" + champ.getText() + "%'";
+		case "soustitre":
+			return "like '" + champ.getText() + "%'";
+		case "typedocument":
+			return "= '" + listechoix.getSelectedItem().toString() + "'";
+		}
+		return null;
 	}
 
 	public int getId() {

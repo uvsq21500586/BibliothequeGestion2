@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -22,15 +20,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
 
+import connexion.AccesJDBC;
 import graphique.pannels.Filtre;
-import net.proteanit.sql.DbUtils;
 
 public class Catalogue {
 
 	public JFrame frameCatalogue;
-	private static JTable tableDocuments;
+	public static JTable tableDocuments;
 	private JButton buttonAjoutFiltre;
 	private JButton buttonRetour;
 	private JPanel panelFiltres;
@@ -39,7 +36,7 @@ public class Catalogue {
 	private JButton buttonEmprunter;
 	private JButton buttonModifier;
 	public int nbfiltres;
-	public ArrayList<Filtre> listeFiltres;
+	public static ArrayList<Filtre> listeFiltres;
 	public static boolean tableDocumentsVide = true;
 
 	/**
@@ -123,6 +120,7 @@ public class Catalogue {
 				System.out.println(filtrechoisi);
 				Filtre filtre = new Filtre(catalogue, panelFiltres, listeFiltres.size(), filtrechoisi);
 				listeFiltres.add(filtre);
+				afficherDocuments();
 			}
 		});
 		buttonAjoutFiltre.setBounds(15, 22, 150, 21);
@@ -179,31 +177,35 @@ public class Catalogue {
 		}
 
 		String query = "select * from Documents";
-		try {
-			ResultSet rs = stm.executeQuery(query);
-			ResultSetMetaData rsmd = rs.getMetaData();
-
-			if (rs.next()) {
-				rs = stm.executeQuery(query);
-				tableDocuments.setModel(DbUtils.resultSetToTableModel(rs));
-				tableDocumentsVide = false;
-			} else {
-				// tableau vide
-				String tabColumn[] = new String[rsmd.getColumnCount()];
-				for (int i = 0; i < rsmd.getColumnCount(); i++) {
-					tabColumn[i] = rsmd.getColumnName(i + 1);
+		if (listeFiltres.size() > 0) {
+			// filtres
+			query = query + " where ";
+			for (int i = 0; i < listeFiltres.size(); i++) {
+				Filtre f = listeFiltres.get(i);
+				query = query + f.getFiltrechoisi() + " " + f.valeur();
+				if (i < listeFiltres.size() - 1) {
+					query = query + " and ";
 				}
-				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
-				tableDocuments.setModel(model);
-				tableDocumentsVide = true;
 			}
-
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-
-			e1.printStackTrace();
-		} catch (NullPointerException e1) {
-			System.out.println("Aucun document");
 		}
+		System.out.println("query= " + query);
+		AccesJDBC.afficherDocument(query);
+		/*
+		 * try { ResultSet rs = stm.executeQuery(query); ResultSetMetaData rsmd =
+		 * rs.getMetaData();
+		 * 
+		 * if (rs.next()) { rs = stm.executeQuery(query);
+		 * tableDocuments.setModel(DbUtils.resultSetToTableModel(rs));
+		 * tableDocumentsVide = false; } else { // tableau vide String tabColumn[] = new
+		 * String[rsmd.getColumnCount()]; for (int i = 0; i < rsmd.getColumnCount();
+		 * i++) { tabColumn[i] = rsmd.getColumnName(i + 1); } DefaultTableModel model =
+		 * new DefaultTableModel(tabColumn, 0); tableDocuments.setModel(model);
+		 * tableDocumentsVide = true; }
+		 * 
+		 * } catch (SQLException e1) { // TODO Auto-generated catch block
+		 * 
+		 * e1.printStackTrace(); } catch (NullPointerException e1) {
+		 * System.out.println("Aucun document"); }
+		 */
 	}
 }
