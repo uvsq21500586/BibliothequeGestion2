@@ -44,6 +44,11 @@ public class Menu {
 		initialize();
 	}
 
+	public Menu(String statut) {
+		this.statut = statut;
+		initialize();
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
