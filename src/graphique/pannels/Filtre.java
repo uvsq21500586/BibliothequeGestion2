@@ -47,7 +47,7 @@ public class Filtre extends JPanel {
 		buttonSupprimer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				panelFiltres.remove(filtre);
-				Catalogue.listeFiltres.remove(id);
+				Catalogue.listeFiltres.remove(filtre.id);
 
 				for (int i = id; i < Catalogue.listeFiltres.size(); i++) {
 					Filtre filtredecale = Catalogue.listeFiltres.get(i);

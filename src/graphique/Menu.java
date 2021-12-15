@@ -17,7 +17,8 @@ import javax.swing.border.TitledBorder;
 
 public class Menu {
 
-	public String statut = "adherant";
+	public String statut = "Adherent";
+	// statut "Gerant" ou "Adherent"
 
 	public JFrame frameMenu;
 
@@ -106,7 +107,7 @@ public class Menu {
 
 		buttonEmprunts.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (statut.equals("adherant")) {
+				if (statut.equals("Adherent")) {
 					AdhérantEmprunt adherentEmprunt = new AdhérantEmprunt();
 					adherentEmprunt.frmGestionemprunt.setVisible(true);
 				} else {
@@ -140,7 +141,7 @@ public class Menu {
 		panelGerant.setBounds(211, 47, 215, 100);
 		frameMenu.getContentPane().add(panelGerant);
 		panelGerant.setLayout(null);
-		if (statut.equals("adherant")) {
+		if (statut.equals("Adherent")) {
 			panelGerant.setVisible(false);
 		}
 		JButton buttonGestionLogins = new JButton("Gestion logins");
