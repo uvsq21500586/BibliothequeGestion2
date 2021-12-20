@@ -45,6 +45,7 @@ public class Catalogue {
 	private static JCheckBox checkBoxSousTitre;
 	private static JCheckBox checkBoxTypeDocument;
 	private static JCheckBox checkBoxTitre;
+	private static JCheckBox checkBoxDateEdition;
 
 	/**
 	 * Launch the application.
@@ -215,7 +216,17 @@ public class Catalogue {
 		checkBoxTypeDocument.setSelected(true);
 		checkBoxTypeDocument.setBounds(6, 89, 145, 21);
 		panelColonnesAffichees.add(checkBoxTypeDocument);
+
+		checkBoxDateEdition = new JCheckBox("Date d'\u00E9dition");
+		checkBoxDateEdition.setSelected(true);
+		checkBoxDateEdition.setBounds(6, 125, 145, 21);
+		panelColonnesAffichees.add(checkBoxDateEdition);
 		checkBoxTypeDocument.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				afficherDocuments();
+			}
+		});
+		checkBoxDateEdition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				afficherDocuments();
 			}
@@ -259,6 +270,10 @@ public class Catalogue {
 		}
 		if (checkBoxTypeDocument.isSelected()) {
 			query = query + ", typedocument";
+		}
+
+		if (checkBoxDateEdition.isSelected()) {
+			query = query + ", dateEdition";
 		}
 
 		query = query + " from Documents";

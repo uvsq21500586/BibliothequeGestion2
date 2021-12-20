@@ -3,25 +3,34 @@ package graphique;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Addcompte {
 
 	public JFrame frmInscription;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
+	private JTextField nomtxtfield;
+	private JTextField prenomtxtfield;
+	private JTextField statuttxtfield;
+	private JTextField usernametxtfield;
+	private JTextField passwordtxtfield;
 
+	Connection cnx = null ;
+	PreparedStatement prepared = null ;
+	ResultSet resultat = null ;
 	/**
 	 * Launch the application.
 	 */
@@ -53,8 +62,9 @@ public class Addcompte {
 		frmInscription.setTitle("Inscription");
 		frmInscription.getContentPane().setForeground(new Color(218, 112, 214));
 		frmInscription.setBounds(100, 100, 600, 358);
-		frmInscription.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmInscription.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmInscription.getContentPane().setLayout(null);
+		cnx = Connexionsql.ConnexionDB();
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(0, 255, 255));
@@ -95,23 +105,11 @@ public class Addcompte {
 		panel.add(panel_3);
 		panel_3.setLayout(null);
 
-		JLabel lblAdresse = new JLabel("E-Mail");
+		JLabel lblAdresse = new JLabel("Statut");
 		lblAdresse.setBounds(0, 0, 100, 30);
 		panel_3.add(lblAdresse);
 		lblAdresse.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAdresse.setFont(new Font("Calibri", Font.BOLD, 14));
-
-		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(Color.LIGHT_GRAY);
-		panel_4.setBounds(10, 171, 100, 30);
-		panel.add(panel_4);
-		panel_4.setLayout(null);
-
-		JLabel lblNumeroDeTel = new JLabel("Numero de Tel");
-		lblNumeroDeTel.setBounds(0, 0, 100, 30);
-		panel_4.add(lblNumeroDeTel);
-		lblNumeroDeTel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNumeroDeTel.setFont(new Font("Calibri", Font.BOLD, 14));
 
 		JLabel lblNewLabel_2 = new JLabel("Inscrivez Vous sur PGI Biblio ");
 		lblNewLabel_2.setForeground(Color.WHITE);
@@ -150,41 +148,60 @@ public class Addcompte {
 		lblPassword.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPassword.setFont(new Font("Calibri", Font.BOLD, 14));
 
-		textField = new JTextField();
-		textField.setBounds(120, 67, 124, 30);
-		panel.add(textField);
-		textField.setColumns(10);
+		nomtxtfield = new JTextField();
+		nomtxtfield.setBounds(120, 67, 124, 30);
+		panel.add(nomtxtfield);
+		nomtxtfield.setColumns(10);
 
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(120, 102, 124, 30);
-		panel.add(textField_1);
+		prenomtxtfield = new JTextField();
+		prenomtxtfield.setColumns(10);
+		prenomtxtfield.setBounds(120, 102, 124, 30);
+		panel.add(prenomtxtfield);
 
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(120, 137, 124, 30);
-		panel.add(textField_2);
+		statuttxtfield = new JTextField();
+		statuttxtfield.setColumns(10);
+		statuttxtfield.setBounds(120, 137, 124, 30);
+		panel.add(statuttxtfield);
 
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(120, 171, 124, 30);
-		panel.add(textField_3);
+		usernametxtfield = new JTextField();
+		usernametxtfield.setColumns(10);
+		usernametxtfield.setBounds(404, 85, 124, 30);
+		panel.add(usernametxtfield);
 
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(404, 85, 124, 30);
-		panel.add(textField_4);
+		passwordtxtfield = new JTextField();
+		passwordtxtfield.setColumns(10);
+		passwordtxtfield.setBounds(404, 147, 124, 30);
+		panel.add(passwordtxtfield);
 
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(404, 147, 124, 30);
-		panel.add(textField_5);
-
-		JButton btnNewButton = new JButton("Confirmer les informations");
-		btnNewButton.setIcon(new ImageIcon("C:\\Users\\kadir\\Downloads\\check_ok_accept_apply_1582.png"));
-		btnNewButton.setFont(new Font("Calibri", Font.BOLD, 20));
-		btnNewButton.setBounds(136, 226, 334, 42);
-		panel.add(btnNewButton);
+		JButton btnajouter = new JButton("Confirmer les informations");
+		btnajouter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+String sql = "insert into Personnes ( nom , prenom , loginconnexion , motdepasse , statut ) values ( ? , ? , ? , ? , ? )" ;
+				
+				try {
+					prepared = cnx.prepareStatement(sql);
+					prepared.setString(1, nomtxtfield.getText().toString());
+					prepared.setString(2, prenomtxtfield.getText().toString());
+					prepared.setString(3, usernametxtfield.getText().toString());
+					prepared.setString(4, passwordtxtfield.getText().toString());
+					prepared.setString(5, statuttxtfield.getText().toString());
+					prepared.execute();
+					
+					JOptionPane.showMessageDialog(null, "Inscription effectuée avec succès");
+					
+					
+				} catch (SQLException e1) {
+				
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		btnajouter.setIcon(new ImageIcon("C:\\Users\\kadir\\Downloads\\check_ok_accept_apply_1582.png"));
+		btnajouter.setFont(new Font("Calibri", Font.BOLD, 20));
+		btnajouter.setBounds(136, 226, 334, 42);
+		panel.add(btnajouter);
 
 		JLabel lblNewLabel_3 = new JLabel("");
 		lblNewLabel_3.setIcon(new ImageIcon("C:\\Users\\kadir\\Downloads\\library_icon_149727(1).png"));

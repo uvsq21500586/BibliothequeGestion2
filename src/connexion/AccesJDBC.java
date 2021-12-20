@@ -7,6 +7,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import graphique.Catalogue;
@@ -68,6 +69,72 @@ public class AccesJDBC {
 			e1.printStackTrace();
 		} catch (NullPointerException e1) {
 			System.out.println("Aucun document");
+		}
+
+	}
+
+	public static int compter(String query) {
+		// fonctionne pour des requêtes qui donnent un nombre entier
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			// ResultSetMetaData rsmd = rs.getMetaData();
+			JTable resultat = new JTable();
+			resultat.setModel(DbUtils.resultSetToTableModel(rs));
+			System.out.println("rs: " + resultat.getValueAt(0, 0));
+			return Integer.parseInt(resultat.getValueAt(0, 0).toString());
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+			return -1;
+		}
+	}
+
+	public static String trouverNom(String query) {
+		// fonctionne pour des requêtes qui donnent un nombre entier
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			// ResultSetMetaData rsmd = rs.getMetaData();
+			JTable resultat = new JTable();
+			resultat.setModel(DbUtils.resultSetToTableModel(rs));
+			System.out.println("rs: " + resultat.getValueAt(0, 0));
+			return resultat.getValueAt(0, 0).toString();
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+			return null;
+		}
+	}
+
+	public static int[] rechercheTheme(String query) {
+		try {
+			ResultSet rs = stm.executeQuery(query);
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				JTable listeIdThemes = new JTable();
+				listeIdThemes.setModel(DbUtils.resultSetToTableModel(rs));
+
+				int tabColumn[] = new int[listeIdThemes.getRowCount()];
+				for (int i = 0; i < listeIdThemes.getRowCount(); i++) {
+					tabColumn[i] = Integer.parseInt(listeIdThemes.getValueAt(i, 0).toString());
+				}
+				return tabColumn;
+			} else {
+				// tableau vide
+				return null;
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+			return null;
 		}
 
 	}
