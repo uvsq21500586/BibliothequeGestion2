@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,24 +15,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.JPasswordField;
+
+import connexion.AccesJDBC;
 
 public class Authentification {
 
-	
 	protected static final Object Gerant = null;
 	public JFrame frame;
 	private JTextField usernamefield;
-	
-	Connection cnx = null ;
-	PreparedStatement prepared = null ;
-	ResultSet resultat = null ;
+
+	Connection cnx = null;
+	PreparedStatement prepared = null;
+	ResultSet resultat = null;
 	private JPasswordField passwordField;
 
-	
-	
 	/**
 	 * Launch the application.
 	 */
@@ -64,7 +62,7 @@ public class Authentification {
 		frame = new JFrame();
 		frame.getContentPane().setForeground(Color.RED);
 		frame.getContentPane().setLayout(null);
-		cnx = Connexionsql.ConnexionDB();
+		// cnx = Connexionsql.ConnexionDB();
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(218, 112, 214));
@@ -80,7 +78,7 @@ public class Authentification {
 		panel.add(lblNewLabel);
 
 		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\kadir\\eclipse-gestion\\BibliothequeGestion2-main\\images\\bibliotheque.png"));
+		lblNewLabel_1.setIcon(new ImageIcon("images/bibliotheque.png"));
 		lblNewLabel_1.setBounds(10, 58, 52, 116);
 		panel.add(lblNewLabel_1);
 
@@ -128,62 +126,32 @@ public class Authentification {
 		signin.setFont(new Font("Calibri", Font.BOLD, 15));
 		signin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				String username = usernamefield.getText().toString();
 				String password = passwordField.getText().toString();
-				
-					
-			String sql = "select loginconnexion ,  motdepasse , statut from Personnes";
-			try {
-				
-				prepared = cnx.prepareStatement(sql);
-				resultat = prepared.executeQuery();
-			int i =0 ;
-			
-			if (username.equals("") || password.equals(""))
-			{
-				JOptionPane.showInternalMessageDialog(null, "Remplissez les champs vides !");
-			}else 
-			{
-				while(resultat.next())
-				{
-					String username1 = resultat.getString("loginconnexion");
-					String password1 = resultat.getString("motdepasse");
-					String statut1 = resultat.getString("statut");
-					if(username1.equals(username) && password1.equals(password))
-					{
-						JOptionPane.showMessageDialog(null, "Connexion Reussite");
-						
-						if (statut1.equals("Gerant")|| statut1.equals("Adherant"));
-						
-						Menu window = new Menu(statut1);
-						window.frameMenu.setVisible(true);
-						
-						}
-						
-						i=1;
-					}
-					
+
+				String sql = "select count (*) from Personnes where loginconnexion = '" + username
+						+ "' and motdepasse = '" + password + "'";
+
+				int acces = AccesJDBC.compter(sql);
+
+				if (acces == 0) {
+					JOptionPane.showMessageDialog(null, "Connexion Echouée");
+				} else {
+					JOptionPane.showMessageDialog(null, "Connexion Reussite");
+					sql = "select statut from Personnes where loginconnexion = '" + username + "' and motdepasse = '"
+							+ password + "'";
+					String statutlogin = AccesJDBC.trouverNom(sql);
+					sql = "select id from Personnes where loginconnexion = '" + username + "' and motdepasse = '"
+							+ password + "'";
+					int idlogin = Integer.parseInt(AccesJDBC.trouverNom(sql));
+					Menu window = new Menu(statutlogin, idlogin);
+					window.frameMenu.setVisible(true);
+
 				}
-					
-					if (i== 0)
-						JOptionPane.showMessageDialog(null, "Connexion Echouée");
-				} 
-			
-			 
-				
-			
-				
-				
-			catch (SQLException e1) {
-				
-				e1.printStackTrace();
-			}
-				
-				
+
 			}
 
-			
 		});
 
 		JPanel panel_4 = new JPanel();
@@ -195,18 +163,17 @@ public class Authentification {
 		JButton createaccount = new JButton("Cr\u00E9er un compte");
 		createaccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				Addcompte objet = new Addcompte();
 				objet.frmInscription.setVisible(true);
-				
+
 			}
 
-			
 		});
 		createaccount.setBounds(0, 0, 136, 27);
 		panel_4.add(createaccount);
 		createaccount.setFont(new Font("Calibri", Font.BOLD, 14));
-		
+
 		passwordField = new JPasswordField();
 		passwordField.setBounds(148, 117, 112, 20);
 		panel.add(passwordField);

@@ -3,10 +3,8 @@ package graphique;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,8 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+
+import connexion.AccesJDBC;
 
 public class Addcompte {
 
@@ -28,9 +26,6 @@ public class Addcompte {
 	private JTextField usernametxtfield;
 	private JTextField passwordtxtfield;
 
-	Connection cnx = null ;
-	PreparedStatement prepared = null ;
-	ResultSet resultat = null ;
 	/**
 	 * Launch the application.
 	 */
@@ -64,7 +59,6 @@ public class Addcompte {
 		frmInscription.setBounds(100, 100, 600, 358);
 		frmInscription.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmInscription.getContentPane().setLayout(null);
-		cnx = Connexionsql.ConnexionDB();
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(0, 255, 255));
@@ -176,26 +170,16 @@ public class Addcompte {
 		JButton btnajouter = new JButton("Confirmer les informations");
 		btnajouter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-String sql = "insert into Personnes ( nom , prenom , loginconnexion , motdepasse , statut ) values ( ? , ? , ? , ? , ? )" ;
-				
-				try {
-					prepared = cnx.prepareStatement(sql);
-					prepared.setString(1, nomtxtfield.getText().toString());
-					prepared.setString(2, prenomtxtfield.getText().toString());
-					prepared.setString(3, usernametxtfield.getText().toString());
-					prepared.setString(4, passwordtxtfield.getText().toString());
-					prepared.setString(5, statuttxtfield.getText().toString());
-					prepared.execute();
-					
-					JOptionPane.showMessageDialog(null, "Inscription effectuée avec succès");
-					
-					
-				} catch (SQLException e1) {
-				
-					e1.printStackTrace();
-				}
-				
+
+				String sql = "insert into Personnes values ('" + nomtxtfield.getText().toString() + "','"
+						+ prenomtxtfield.getText().toString() + "','" + usernametxtfield.getText().toString() + "','"
+						+ passwordtxtfield.getText().toString() + "'," + "'" + statuttxtfield.getText().toString()
+						+ "')";
+
+				AccesJDBC.Edition(sql);
+
+				JOptionPane.showMessageDialog(null, "Inscription effectuée avec succès");
+
 			}
 		});
 		btnajouter.setIcon(new ImageIcon("C:\\Users\\kadir\\Downloads\\check_ok_accept_apply_1582.png"));

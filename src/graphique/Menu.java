@@ -13,9 +13,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import connexion.AccesJDBC;
+
 public class Menu {
+
+	public static int idLogin;
+	public JLabel lblNewLabel;
 
 	public String statut = "Adherent";
 	// statut "Gerant" ou "Adherent"
@@ -45,9 +51,15 @@ public class Menu {
 		initialize();
 	}
 
-	public Menu(String statut) {
+	public Menu(String statut, int idlogin) {
 		this.statut = statut;
+		idLogin = idlogin;
 		initialize();
+		String sql = "Select Nom from Personnes where id = " + idlogin;
+		String nom = AccesJDBC.trouverNom(sql);
+		sql = "Select Prenom from Personnes where id = " + idlogin;
+		String prenom = AccesJDBC.trouverNom(sql);
+		lblNewLabel.setText("Bienvenu " + nom + " " + prenom);
 	}
 
 	/**
@@ -58,9 +70,10 @@ public class Menu {
 		frameMenu.getContentPane().setBackground(new Color(127, 255, 212));
 		frameMenu.getContentPane().setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("Bienvenu");
+		lblNewLabel = new JLabel("Bienvenu");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel.setBounds(121, 10, 121, 23);
+		lblNewLabel.setBounds(10, 10, 416, 23);
 		frameMenu.getContentPane().add(lblNewLabel);
 
 		JButton buttonCatalogue = new JButton("Catalogue");

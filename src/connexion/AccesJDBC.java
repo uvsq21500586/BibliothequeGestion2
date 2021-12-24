@@ -7,7 +7,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 import graphique.Catalogue;
@@ -73,6 +75,64 @@ public class AccesJDBC {
 
 	}
 
+	public static void afficherDetailDocument(int iddoc, JTextPane description) {
+		// afficher la description d'un seul document
+		JTable document = new JTable();
+		JTable auteurs = new JTable();
+		String query = "select * from Documents where id = " + iddoc;
+		String query2 = "select * from DocumentsAuteurs where idDocument = " + iddoc;
+		String texte = "";
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+			document.setModel(DbUtils.resultSetToTableModel(rs));
+			ResultSet rs2 = stm.executeQuery(query2);
+			auteurs.setModel(DbUtils.resultSetToTableModel(rs2));
+			// id
+			texte = texte + "id: " + iddoc + "\n";
+			// titre
+			texte = texte + "titre: " + document.getValueAt(0, 1) + "\n";
+			// sous titre
+			texte = texte + "sous-titre: " + document.getValueAt(0, 2) + "\n";
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+		}
+		description.setText(texte);
+
+	}
+
+	public static void listeChoix(String query, JComboBox<String> combobox) {
+		// réinitialiser la liste avant de la mettre à jour
+		combobox.removeAllItems();
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			// ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				// remplissage du combobox
+				JTable table = new JTable();
+				table.setModel(DbUtils.resultSetToTableModel(rs));
+				for (int i = 0; i < table.getRowCount(); i++) {
+					combobox.addItem(table.getValueAt(i, 0).toString());
+				}
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+		}
+
+	}
+
 	public static int compter(String query) {
 		// fonctionne pour des requêtes qui donnent un nombre entier
 		try {
@@ -91,6 +151,28 @@ public class AccesJDBC {
 		}
 	}
 
+	public static boolean booleen(String query) {
+		// fonctionne pour des requêtes qui donnent un booleen
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			// ResultSetMetaData rsmd = rs.getMetaData();
+			JTable resultat = new JTable();
+			resultat.setModel(DbUtils.resultSetToTableModel(rs));
+			System.out.println("rs: " + resultat.getValueAt(0, 0));
+			if (resultat.getValueAt(0, 0).toString().equals("false")) {
+				return false;
+			} else {
+				return true;
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+			return false;
+		}
+	}
+
 	public static String trouverNom(String query) {
 		// fonctionne pour des requêtes qui donnent un nombre entier
 		try {
@@ -106,6 +188,18 @@ public class AccesJDBC {
 
 			e1.printStackTrace();
 			return null;
+		}
+	}
+
+	public static void Edition(String query) {
+		// fonctionne pour des requêtes qui donnent un nombre entier
+		System.out.println(query);
+		try {
+			stm.executeQuery(query);
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 
