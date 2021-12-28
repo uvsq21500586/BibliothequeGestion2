@@ -13,9 +13,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.table.TableColumnModel;
 
 import connexion.AccesJDBC;
 
@@ -26,6 +28,8 @@ public class AdhérantEmprunt {
 	public static JTable table_docsempruntes;
 	private JComboBox<String> comboBoxIdDoc;
 	private JTextPane textPaneDescription;
+	private JCheckBox checkBoxstatut;
+	private JCheckBox checkBoxfindateemprunt;
 
 	/**
 	 * Launch the application.
@@ -50,6 +54,7 @@ public class AdhérantEmprunt {
 		initialize();
 		String sql = "Select id from Documents where Titre like '" + textField.getText() + "%'";
 		AccesJDBC.listeChoix(sql, comboBoxIdDoc);
+		afficherDocsEmprunts();
 	}
 
 	/**
@@ -58,7 +63,7 @@ public class AdhérantEmprunt {
 	private void initialize() {
 		frmGestionemprunt = new JFrame();
 		frmGestionemprunt.setTitle("GESTION_EMPRUNT");
-		frmGestionemprunt.setBounds(100, 100, 780, 349);
+		frmGestionemprunt.setBounds(100, 100, 901, 349);
 		frmGestionemprunt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGestionemprunt.getContentPane().setLayout(null);
 
@@ -96,22 +101,35 @@ public class AdhérantEmprunt {
 		panel.add(textPaneDescription);
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(397, 44, 359, 209);
+		panel_1.setBounds(397, 44, 480, 209);
 		frmGestionemprunt.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		table_docsempruntes = new JTable();
-		table_docsempruntes.setBounds(10, 33, 339, 166);
-		panel_1.add(table_docsempruntes);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 33, 460, 166);
+		panel_1.add(scrollPane);
 
-		JCheckBox checkBoxstatut = new JCheckBox("Trier par statut");
+		table_docsempruntes = new JTable();
+		scrollPane.setViewportView(table_docsempruntes);
+		table_docsempruntes.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+		checkBoxstatut = new JCheckBox("Trier par statut");
+		checkBoxstatut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				afficherDocsEmprunts();
+			}
+		});
 		checkBoxstatut.setBounds(10, 6, 160, 21);
 		panel_1.add(checkBoxstatut);
 
-		JCheckBox chckbxNewCheckBox = new JCheckBox("Trier par date fin d'emprunt");
-		chckbxNewCheckBox.setBounds(193, 6, 160, 21);
-		panel_1.add(chckbxNewCheckBox);
-
+		checkBoxfindateemprunt = new JCheckBox("Trier par date fin d'emprunt");
+		checkBoxfindateemprunt.setBounds(193, 6, 160, 21);
+		panel_1.add(checkBoxfindateemprunt);
+		checkBoxfindateemprunt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				afficherDocsEmprunts();
+			}
+		});
 		JLabel lblNewLabel = new JLabel("Documents disponibles ");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
 		lblNewLabel.setBounds(39, 11, 227, 22);
@@ -125,6 +143,7 @@ public class AdhérantEmprunt {
 		JButton buttonRetour = new JButton("Retour");
 		buttonRetour.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frmGestionemprunt.dispose();
 			}
 		});
 		buttonRetour.setBounds(10, 276, 140, 23);
@@ -156,19 +175,29 @@ public class AdhérantEmprunt {
 				}
 			}
 		});
-		btnEmprunt.setBounds(160, 276, 140, 23);
+		btnEmprunt.setBounds(186, 276, 140, 23);
 		frmGestionemprunt.getContentPane().add(btnEmprunt);
 
 		JButton buttonRecherche = new JButton("Recherche Document");
-		buttonRecherche.setBounds(477, 276, 140, 23);
+		buttonRecherche.setBounds(382, 276, 140, 23);
 		frmGestionemprunt.getContentPane().add(buttonRecherche);
 
 		JButton buttonfinEmprunt = new JButton("Rendre");
-		buttonfinEmprunt.setBounds(310, 277, 140, 21);
+		buttonfinEmprunt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(table_docsempruntes.getSelectedRow());
+				if (table_docsempruntes.getSelectedRow() > -1) {
+					String sql = "Update Emprunts set etatEmprunt = 'renteencours' where id = "
+							+ table_docsempruntes.getValueAt(table_docsempruntes.getSelectedRow(), 0);
+					AccesJDBC.Edition(sql);
+				}
+			}
+		});
+		buttonfinEmprunt.setBounds(565, 277, 140, 21);
 		frmGestionemprunt.getContentPane().add(buttonfinEmprunt);
 
 		JButton btnNewButton = new JButton("Reporter");
-		btnNewButton.setBounds(625, 277, 131, 21);
+		btnNewButton.setBounds(746, 277, 131, 21);
 		frmGestionemprunt.getContentPane().add(btnNewButton);
 
 		textField.addKeyListener(new KeyAdapter() {
@@ -189,5 +218,22 @@ public class AdhérantEmprunt {
 	public void afficherDetailDoc() {
 		int id = Integer.parseInt(comboBoxIdDoc.getSelectedItem().toString());
 		AccesJDBC.afficherDetailDocument(id, textPaneDescription);
+	}
+
+	public void afficherDocsEmprunts() {
+		// liste des documents empruntés par l'adhérent
+		String sql = "Select * from Emprunts where idPersonne = " + Menu.idLogin;
+		if (checkBoxstatut.isSelected() && !checkBoxfindateemprunt.isSelected()) {
+			sql = sql + " order by etatEmprunt";
+		} else if (!checkBoxstatut.isSelected() && checkBoxfindateemprunt.isSelected()) {
+			sql = sql + " order by dateLimite";
+		} else if (checkBoxstatut.isSelected() && checkBoxfindateemprunt.isSelected()) {
+			sql = sql + " order by etatEmprunt,dateLimite";
+		}
+		AccesJDBC.afficherEmprunt(sql);
+		TableColumnModel columnModel = table_docsempruntes.getColumnModel();
+		columnModel.getColumn(0).setPreferredWidth(20);
+		columnModel.getColumn(1).setPreferredWidth(20);
+		columnModel.getColumn(2).setPreferredWidth(20);
 	}
 }

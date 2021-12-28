@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
+import graphique.AdhérantEmprunt;
 import graphique.Catalogue;
 import net.proteanit.sql.DbUtils;
 
@@ -75,6 +76,34 @@ public class AccesJDBC {
 
 	}
 
+	public static void afficherEmprunt(String query) {
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				AdhérantEmprunt.table_docsempruntes.setModel(DbUtils.resultSetToTableModel(rs));
+			} else {
+				// tableau vide
+				String tabColumn[] = new String[rsmd.getColumnCount()];
+				for (int i = 0; i < rsmd.getColumnCount(); i++) {
+					tabColumn[i] = rsmd.getColumnName(i + 1);
+				}
+				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
+				AdhérantEmprunt.table_docsempruntes.setModel(model);
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+		}
+
+	}
+
 	public static void afficherDetailDocument(int iddoc, JTextPane description) {
 		// afficher la description d'un seul document
 		JTable document = new JTable();
@@ -93,8 +122,9 @@ public class AccesJDBC {
 			// titre
 			texte = texte + "titre: " + document.getValueAt(0, 1) + "\n";
 			// sous titre
-			texte = texte + "sous-titre: " + document.getValueAt(0, 2) + "\n";
-
+			if (document.getValueAt(0, 2) != null) {
+				texte = texte + "sous-titre: " + document.getValueAt(0, 2) + "\n";
+			}
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 
