@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,6 +21,7 @@ import javax.swing.JTextPane;
 import javax.swing.table.TableColumnModel;
 
 import connexion.AccesJDBC;
+import operations.Operation;
 
 public class AdhérantEmprunt {
 
@@ -155,14 +157,16 @@ public class AdhérantEmprunt {
 				// d'abord vérifier si un document est sélectionné
 				if (comboBoxIdDoc.getSelectedItem() != null) {
 					// d'abord vérifier si le document est disponible
-					boolean documentDispo = false;
+					boolean documentEmprunte = false;
 					String sqldocdispo = "select isEmprunte from Documents where id = "
 							+ comboBoxIdDoc.getSelectedItem();
-					documentDispo = AccesJDBC.booleen(sqldocdispo);
-					if (!documentDispo) {
+					documentEmprunte = AccesJDBC.booleen(sqldocdispo);
+					if (!documentEmprunte) {
 						// document non emprunté
+						String dateEmprunt = Operation.dateFormat(new Date());
+
 						String sqlcreationEmprunt = "insert into Emprunts values (" + comboBoxIdDoc.getSelectedItem()
-								+ "," + Menu.idLogin + ",'encoursvalidation',null,null,null,null)";
+								+ "," + Menu.idLogin + ",'encoursvalidation','" + dateEmprunt + "',null,null,null)";
 						AccesJDBC.Edition(sqlcreationEmprunt);
 
 						// il faut mettre à jour l'attribut "estEmprunté" pour éviter que 2 adhérents

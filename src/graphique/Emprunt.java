@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -23,9 +22,13 @@ import operations.Operation;
 public class Emprunt {
 
 	public JFrame GESTON_EMPRUNTS;
-	private JComboBox<String> comboBoxEmpruntsnonValides;
+	private JComboBox<String> comboBoxEmpruntsnonValidesAjourne;
 	private JComboBox<String> comboBoxRetourEmprunt;
 	private JTextField textFieldDateLimite;
+	private JButton buttonAjourner;
+	private JButton buttonValider1;
+	private JButton buttonValider2;
+	private JButton buttonRetard;
 
 	/**
 	 * Launch the application.
@@ -48,8 +51,9 @@ public class Emprunt {
 	 */
 	public Emprunt() {
 		initialize();
-		initChoixEmpruntsNonValides();
+		initChoixEmpruntsNonValidesAjourne();
 		initChoixEmpruntsRetours();
+
 	}
 
 	/**
@@ -81,21 +85,21 @@ public class Emprunt {
 		GESTON_EMPRUNTS.getContentPane().add(panel);
 		panel.setLayout(null);
 
-		JButton buttonValider = new JButton("Valider");
+		buttonValider1 = new JButton("Valider");
 
-		buttonValider.setBounds(205, 188, 75, 21);
-		panel.add(buttonValider);
+		buttonValider1.setBounds(10, 188, 75, 21);
+		panel.add(buttonValider1);
 
-		comboBoxEmpruntsnonValides = new JComboBox<String>();
+		comboBoxEmpruntsnonValidesAjourne = new JComboBox<String>();
 
-		comboBoxEmpruntsnonValides.setBounds(172, 24, 111, 22);
-		panel.add(comboBoxEmpruntsnonValides);
+		comboBoxEmpruntsnonValidesAjourne.setBounds(172, 24, 111, 22);
+		panel.add(comboBoxEmpruntsnonValidesAjourne);
 
 		JLabel labelAdherentEmprunt = new JLabel("Adh\u00E9rent:");
 		labelAdherentEmprunt.setBounds(10, 65, 273, 14);
 		panel.add(labelAdherentEmprunt);
 
-		JLabel labelDocemprunt = new JLabel("Emprunt à valider: ");
+		JLabel labelDocemprunt = new JLabel("Emprunt \u00E0 valider ou ajourner: ");
 		labelDocemprunt.setBounds(10, 28, 159, 14);
 		panel.add(labelDocemprunt);
 
@@ -117,6 +121,10 @@ public class Emprunt {
 		labelFormatDate.setBounds(10, 141, 117, 13);
 		panel.add(labelFormatDate);
 
+		buttonAjourner = new JButton("Ajourner");
+		buttonAjourner.setBounds(241, 188, 85, 21);
+		panel.add(buttonAjourner);
+
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(
 				new TitledBorder(null, "Retour d'emprunt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -130,10 +138,10 @@ public class Emprunt {
 		panel_1.add(comboBoxRetourEmprunt);
 
 		JLabel labelAherent2 = new JLabel("Adh\u00E9rent : ");
-		labelAherent2.setBounds(22, 62, 115, 14);
+		labelAherent2.setBounds(22, 62, 237, 14);
 		panel_1.add(labelAherent2);
 
-		JButton buttonValider2 = new JButton("Valider");
+		buttonValider2 = new JButton("Valider");
 
 		buttonValider2.setBounds(10, 186, 89, 23);
 		panel_1.add(buttonValider2);
@@ -142,7 +150,7 @@ public class Emprunt {
 		labelEmpruntRetour.setBounds(22, 25, 105, 14);
 		panel_1.add(labelEmpruntRetour);
 
-		JButton buttonRetard = new JButton("Alerter");
+		buttonRetard = new JButton("Alerter");
 		buttonRetard.setBounds(213, 187, 85, 21);
 		panel_1.add(buttonRetard);
 
@@ -150,12 +158,16 @@ public class Emprunt {
 		labelTitreDocEmprunt2.setBounds(22, 94, 237, 13);
 		panel_1.add(labelTitreDocEmprunt2);
 
+		JLabel labelEtat = new JLabel("Etat de l'emprunt: ");
+		labelEtat.setBounds(22, 132, 237, 13);
+		panel_1.add(labelEtat);
+
 		JButton btnNewButton_2 = new JButton("Requetes");
 		btnNewButton_2.setBounds(278, 294, 89, 23);
 		GESTON_EMPRUNTS.getContentPane().add(btnNewButton_2);
 
 		JButton btnNewButton_2_1 = new JButton("Documents");
-		btnNewButton_2_1.setBounds(426, 294, 89, 23);
+		btnNewButton_2_1.setBounds(426, 294, 112, 23);
 		GESTON_EMPRUNTS.getContentPane().add(btnNewButton_2_1);
 
 		JButton btnNewButton_2_1_1 = new JButton("Abonn\u00E9s");
@@ -171,17 +183,17 @@ public class Emprunt {
 		buttonRetour.setBounds(31, 294, 85, 21);
 		GESTON_EMPRUNTS.getContentPane().add(buttonRetour);
 
-		comboBoxEmpruntsnonValides.addActionListener(new ActionListener() {
+		comboBoxEmpruntsnonValidesAjourne.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (comboBoxEmpruntsnonValides.getSelectedItem() != null) {
+				if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null) {
 					String sqlidadherent = "select idPersonne from Emprunts where id = "
-							+ comboBoxEmpruntsnonValides.getSelectedItem();
+							+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
 					String sqlnomadherent = "select Nom from Personnes where id = "
 							+ AccesJDBC.trouverNom(sqlidadherent);
 					String sqlprenomadherent = "select Prenom from Personnes where id = "
 							+ AccesJDBC.trouverNom(sqlidadherent);
 					String sqlidDoc = "select idDocument from Emprunts where id = "
-							+ comboBoxEmpruntsnonValides.getSelectedItem();
+							+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
 					String sqlTitredoc = "select Titre from Documents where id = " + AccesJDBC.trouverNom(sqlidDoc);
 					labelAdherentEmprunt.setText("Adhérent : " + AccesJDBC.trouverNom(sqlnomadherent) + " "
 							+ AccesJDBC.trouverNom(sqlprenomadherent));
@@ -189,13 +201,13 @@ public class Emprunt {
 				}
 			}
 		});
-		if (comboBoxEmpruntsnonValides.getSelectedItem() != null) {
+		if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null) {
 			String sqlidadherent = "select idPersonne from Emprunts where id = "
-					+ comboBoxEmpruntsnonValides.getSelectedItem();
+					+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
 			String sqlnomadherent = "select Nom from Personnes where id = " + AccesJDBC.trouverNom(sqlidadherent);
 			String sqlprenomadherent = "select Prenom from Personnes where id = " + AccesJDBC.trouverNom(sqlidadherent);
 			String sqlidDoc = "select idDocument from Emprunts where id = "
-					+ comboBoxEmpruntsnonValides.getSelectedItem();
+					+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
 			String sqlTitredoc = "select Titre from Documents where id = " + AccesJDBC.trouverNom(sqlidDoc);
 			labelAdherentEmprunt.setText("Adhérent : " + AccesJDBC.trouverNom(sqlnomadherent) + " "
 					+ AccesJDBC.trouverNom(sqlprenomadherent));
@@ -213,9 +225,12 @@ public class Emprunt {
 					String sqlidDoc = "select idDocument from Emprunts where id = "
 							+ comboBoxRetourEmprunt.getSelectedItem();
 					String sqlTitredoc = "select Titre from Documents where id = " + AccesJDBC.trouverNom(sqlidDoc);
+					String sqletat = "select etatEmprunt from Emprunts where id = "
+							+ comboBoxRetourEmprunt.getSelectedItem();
 					labelAherent2.setText("Adhérent : " + AccesJDBC.trouverNom(sqlnomadherent) + " "
 							+ AccesJDBC.trouverNom(sqlprenomadherent));
 					labelTitreDocEmprunt2.setText("Titre du document: " + AccesJDBC.trouverNom(sqlTitredoc));
+					labelEtat.setText("Etat de l'emprunt: " + AccesJDBC.trouverNom(sqletat));
 				}
 			}
 		});
@@ -226,20 +241,22 @@ public class Emprunt {
 			String sqlprenomadherent = "select Prenom from Personnes where id = " + AccesJDBC.trouverNom(sqlidadherent);
 			String sqlidDoc = "select idDocument from Emprunts where id = " + comboBoxRetourEmprunt.getSelectedItem();
 			String sqlTitredoc = "select Titre from Documents where id = " + AccesJDBC.trouverNom(sqlidDoc);
+			String sqletat = "select etatEmprunt from Emprunts where id = " + comboBoxRetourEmprunt.getSelectedItem();
 			labelAherent2.setText("Adhérent : " + AccesJDBC.trouverNom(sqlnomadherent) + " "
 					+ AccesJDBC.trouverNom(sqlprenomadherent));
 			labelTitreDocEmprunt2.setText("Titre du document: " + AccesJDBC.trouverNom(sqlTitredoc));
+			labelEtat.setText("Etat de l'emprunt: " + AccesJDBC.trouverNom(sqletat));
 		}
-		buttonValider.addActionListener(new ActionListener() {
+		buttonValider1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (comboBoxEmpruntsnonValides.getSelectedItem() != null
+				if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null
 						&& GestionErreurs.formatDate(textFieldDateLimite.getText())) {
 					String query = "update Emprunts set etatEmprunt = 'valide', dateLimite = '"
 							+ textFieldDateLimite.getText() + "' where id = "
-							+ comboBoxEmpruntsnonValides.getSelectedItem();
+							+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
 					AccesJDBC.Edition(query);
 					// mise à jour de la liste des emprunts à valider
-					initChoixEmpruntsNonValides();
+					initChoixEmpruntsNonValidesAjourne();
 				}
 			}
 		});
@@ -255,25 +272,57 @@ public class Emprunt {
 					if (etatEmprunt.equals("renteencours")) {
 						Date date = new Date();
 						System.out.println(date);
-						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
-						System.out.println(dateformat.format(date));
 						String datestring = Operation.dateFormat(date);
 						System.out.println(datestring);
+						String query = "update Emprunts set etatEmprunt = 'rendu', dateRetour = '" + datestring
+								+ "' where id = " + comboBoxRetourEmprunt.getSelectedItem();
+						AccesJDBC.Edition(query);
+						String querydoc = "Select idDocument from Emprunts where id = "
+								+ comboBoxRetourEmprunt.getSelectedItem();
+						String idDoc = AccesJDBC.trouverNom(querydoc);
+						query = "update Documents set isEmprunte = 0 where id = '" + idDoc;
+						AccesJDBC.Edition(query);
+
 					}
 				}
 			}
 		});
 	}
 
-	public void initChoixEmpruntsNonValides() {
+	public void initChoixEmpruntsNonValidesAjourne() {
 		// liste des emprunts non validés par le gérant
-		String query = "select id from Emprunts where etatEmprunt = 'encoursvalidation'";
-		AccesJDBC.listeChoix(query, comboBoxEmpruntsnonValides);
+		String query = "select id from Emprunts where etatEmprunt = 'encoursvalidation' or etatEmprunt = 'encoursajourné'";
+		AccesJDBC.listeChoix(query, comboBoxEmpruntsnonValidesAjourne);
+		if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null
+				&& AccesJDBC.trouverNom(comboBoxEmpruntsnonValidesAjourne.getSelectedItem().toString())
+						.equals("encoursvalidation")) {
+			buttonValider1.setEnabled(true);
+			buttonAjourner.setEnabled(false);
+		} else if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null) {
+			buttonValider1.setEnabled(false);
+			buttonAjourner.setEnabled(true);
+		} else {
+			buttonAjourner.setEnabled(false);
+			buttonValider1.setEnabled(false);
+		}
 	}
 
 	public void initChoixEmpruntsRetours() {
 		// liste des emprunts prêts à être rendus ou périmés
 		String query = "select id from Emprunts where etatEmprunt = 'perime' or etatEmprunt = 'renteencours'";
 		AccesJDBC.listeChoix(query, comboBoxRetourEmprunt);
+		if (comboBoxRetourEmprunt.getSelectedItem() != null) {
+			query = "select etatEmprunt from Emprunts where id = " + comboBoxRetourEmprunt.getSelectedItem();
+			if (AccesJDBC.trouverNom(query).equals("perime")) {
+				buttonValider2.setEnabled(false);
+				buttonRetard.setEnabled(true);
+			} else if (comboBoxRetourEmprunt.getSelectedItem() != null) {
+				buttonValider2.setEnabled(true);
+				buttonRetard.setEnabled(false);
+			}
+		} else {
+			buttonValider2.setEnabled(false);
+			buttonRetard.setEnabled(false);
+		}
 	}
 }

@@ -125,6 +125,12 @@ public class AccesJDBC {
 			if (document.getValueAt(0, 2) != null) {
 				texte = texte + "sous-titre: " + document.getValueAt(0, 2) + "\n";
 			}
+			if (document.getValueAt(0, 7).toString().equals("true")) {
+				texte = texte + "disponible: non\n";
+			} else {
+				texte = texte + "disponible: oui\n";
+			}
+
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 
