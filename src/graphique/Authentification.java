@@ -77,20 +77,20 @@ public class Authentification {
 		lblNewLabel.setBounds(10, 11, 277, 41);
 		panel.add(lblNewLabel);
 
-		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon("images/bibliotheque.png"));
-		lblNewLabel_1.setBounds(10, 58, 52, 116);
-		panel.add(lblNewLabel_1);
+		JLabel biblioimg = new JLabel("");
+		biblioimg.setIcon(new ImageIcon("images/bibliotheque.png"));
+		biblioimg.setBounds(10, 172, 52, 116);
+		panel.add(biblioimg);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(218, 112, 214));
-		panel_1.setBounds(72, 73, 60, 20);
+		panel_1.setBounds(38, 73, 100, 20);
 		panel.add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lblNewLabel_2 = new JLabel("Username");
+		JLabel lblNewLabel_2 = new JLabel("Identifiant");
 		lblNewLabel_2.setFont(new Font("Calibri", Font.BOLD, 14));
-		lblNewLabel_2.setBounds(0, 0, 60, 20);
+		lblNewLabel_2.setBounds(0, 0, 100, 20);
 		panel_1.add(lblNewLabel_2);
 		lblNewLabel_2.setForeground(new Color(0, 0, 0));
 		lblNewLabel_2.setBackground(new Color(0, 0, 0));
@@ -98,13 +98,13 @@ public class Authentification {
 
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(new Color(218, 112, 214));
-		panel_2.setBounds(72, 117, 60, 20);
+		panel_2.setBounds(38, 117, 100, 20);
 		panel.add(panel_2);
 		panel_2.setLayout(null);
 
-		JLabel lblNewLabel_2_1 = new JLabel("Password");
+		JLabel lblNewLabel_2_1 = new JLabel("Mot de Passe");
 		lblNewLabel_2_1.setFont(new Font("Calibri", Font.BOLD, 14));
-		lblNewLabel_2_1.setBounds(0, 0, 60, 20);
+		lblNewLabel_2_1.setBounds(0, 0, 100, 20);
 		panel_2.add(lblNewLabel_2_1);
 		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -175,7 +175,7 @@ public class Authentification {
 		createaccount.setFont(new Font("Calibri", Font.BOLD, 14));
 
 		passwordField = new JPasswordField();
-		passwordField.setBounds(148, 117, 112, 20);
+		passwordField.setBounds(148, 117, 119, 20);
 		panel.add(passwordField);
 		frame.setBounds(100, 100, 313, 350);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

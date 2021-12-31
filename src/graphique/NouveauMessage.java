@@ -1,20 +1,39 @@
 package graphique;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import connexion.AccesJDBC;
+import operations.Operation;
+
 public class NouveauMessage {
 
 	public JFrame frame;
-	private JTextField textFieldSujetMsg;
-	private JTextField textFieldMail;
+	public static int idExpediteur;
+	public static int idDestinataire;
+	private JTextField txtsujetfield;
+	private JTextField txtdestinatairefield;
+	private JTextField txtexpediteurfield;
+	private JTextField txtdatefield;
+	Connection cnx = null;
+	PreparedStatement prepared = null;
+	ResultSet resultat = null;
 
 	/**
 	 * Launch the application.
@@ -37,6 +56,12 @@ public class NouveauMessage {
 	 */
 	public NouveauMessage() {
 		initialize();
+		// String dateEnvoi = Operation.dateFormat(new Date());
+		txtdatefield.setText(Operation.dateFormat(new Date()));
+		String sqlNomExpediteur = "select Nom from Personnes where id = " + idExpediteur;
+		String sqlPrenomExpediteur = "select Prenom from Personnes where id = " + idExpediteur;
+		txtexpediteurfield
+				.setText(AccesJDBC.trouverNom(sqlNomExpediteur) + " " + AccesJDBC.trouverNom(sqlPrenomExpediteur));
 	}
 
 	/**
@@ -50,21 +75,21 @@ public class NouveauMessage {
 
 		JLabel lblNewLabel_1 = new JLabel("Sujet");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblNewLabel_1.setBounds(60, 186, 78, 30);
+		lblNewLabel_1.setBounds(94, 59, 78, 30);
 		frame.getContentPane().add(lblNewLabel_1);
 
-		textFieldSujetMsg = new JTextField();
-		textFieldSujetMsg.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		textFieldSujetMsg.setBounds(227, 188, 535, 30);
-		frame.getContentPane().add(textFieldSujetMsg);
-		textFieldSujetMsg.setColumns(10);
-
-		JButton btnSendMsg = new JButton("ENVOYER");
-		btnSendMsg.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnSendMsg.setBounds(60, 582, 144, 53);
-		frame.getContentPane().add(btnSendMsg);
+		txtsujetfield = new JTextField();
+		txtsujetfield.setFont(new Font("Tahoma", Font.BOLD, 15));
+		txtsujetfield.setBounds(227, 61, 501, 30);
+		frame.getContentPane().add(txtsujetfield);
+		txtsujetfield.setColumns(10);
 
 		JButton btnCancelMsg = new JButton("ANNULER");
+		btnCancelMsg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
 		btnCancelMsg.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnCancelMsg.setBounds(634, 580, 144, 57);
 		frame.getContentPane().add(btnCancelMsg);
@@ -92,13 +117,91 @@ public class NouveauMessage {
 
 		JLabel lblNewLabel_3 = new JLabel("Destinataire");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblNewLabel_3.setBounds(60, 127, 131, 30);
+		lblNewLabel_3.setBounds(60, 141, 131, 30);
 		frame.getContentPane().add(lblNewLabel_3);
 
-		textFieldMail = new JTextField();
-		textFieldMail.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		textFieldMail.setBounds(227, 127, 535, 30);
-		frame.getContentPane().add(textFieldMail);
-		textFieldMail.setColumns(10);
+		txtdestinatairefield = new JTextField();
+		txtdestinatairefield.setFont(new Font("Tahoma", Font.BOLD, 15));
+		txtdestinatairefield.setBounds(227, 143, 501, 30);
+		frame.getContentPane().add(txtdestinatairefield);
+		txtdestinatairefield.setColumns(10);
+
+		JLabel lblNewLabel_3_1 = new JLabel("Expediteur");
+		lblNewLabel_3_1.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblNewLabel_3_1.setBounds(60, 100, 131, 30);
+		frame.getContentPane().add(lblNewLabel_3_1);
+
+		JButton btnSendMsg = new JButton("ENVOYER");
+		btnSendMsg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// String sqlIdExpediteur =
+
+				String sql = "insert into Message values ('" + txtsujetfield.getText() + "'," + idExpediteur + ","
+						+ idDestinataire + ",'" + txtdatefield.getText().toString() + "','"
+						+ textAreaMsg.getText().toString() + "',0)";
+				System.out.println(sql);
+				AccesJDBC.Edition(sql);
+
+				JOptionPane.showMessageDialog(null, "Message Envoyé");
+
+			}
+		});
+
+		btnSendMsg.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btnSendMsg.setBounds(60, 582, 144, 53);
+		frame.getContentPane().add(btnSendMsg);
+
+		txtexpediteurfield = new JTextField();
+		txtexpediteurfield.setEditable(false);
+		txtexpediteurfield.setFont(new Font("Tahoma", Font.BOLD, 15));
+		txtexpediteurfield.setColumns(10);
+		txtexpediteurfield.setBounds(227, 102, 501, 30);
+		frame.getContentPane().add(txtexpediteurfield);
+
+		JLabel lblNewLabel_1_1 = new JLabel("Date d'envoi");
+		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblNewLabel_1_1.setBounds(60, 192, 131, 30);
+		frame.getContentPane().add(lblNewLabel_1_1);
+
+		txtdatefield = new JTextField();
+		txtdatefield.setEditable(false);
+		txtdatefield.setFont(new Font("Tahoma", Font.BOLD, 15));
+		txtdatefield.setColumns(10);
+		txtdatefield.setBounds(227, 192, 501, 30);
+		frame.getContentPane().add(txtdatefield);
+
+		JButton buttonRecherche = new JButton("Recherche");
+		buttonRecherche.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String sqlListePersonnes = "select id from Personnes where Nom like '" + txtdestinatairefield.getText()
+						+ "%'";
+				JComboBox<String> combobox = new JComboBox<String>();
+				AccesJDBC.listeChoix(sqlListePersonnes, combobox);
+				String[] choixDestinataire = new String[combobox.getItemCount()];
+				for (int i = 0; i < combobox.getItemCount(); i++) {
+					String sqlNomPersonnes = "select Nom from Personnes where id = '" + combobox.getItemAt(i) + "'";
+					String sqlPrenomPersonnes = "select Prenom from Personnes where id = '" + combobox.getItemAt(i)
+							+ "'";
+					choixDestinataire[i] = AccesJDBC.trouverNom(sqlNomPersonnes) + " "
+							+ AccesJDBC.trouverNom(sqlPrenomPersonnes);
+				}
+				if (combobox.getItemCount() > 0) {
+					String reponse = JOptionPane.showInputDialog(frame, "Choisissez un destinataire",
+							"Choix destinataire", JOptionPane.QUESTION_MESSAGE, null, choixDestinataire, "Noms")
+							.toString();
+					if (reponse != null) {
+						txtdestinatairefield.setText(reponse);
+						String sqlIdDestinataire = "select id from Personnes where nom = '";
+						String[] nomPrenom = reponse.split(" ");
+						sqlIdDestinataire = sqlIdDestinataire + nomPrenom[0] + "' and Prenom = '" + nomPrenom[1] + "'";
+						System.out.println(sqlIdDestinataire);
+						idDestinataire = Integer.parseInt(AccesJDBC.trouverNom(sqlIdDestinataire));
+					}
+				}
+			}
+		});
+		buttonRecherche.setBackground(Color.GREEN);
+		buttonRecherche.setBounds(738, 141, 119, 30);
+		frame.getContentPane().add(buttonRecherche);
 	}
 }

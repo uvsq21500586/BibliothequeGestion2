@@ -5,9 +5,14 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,9 +27,12 @@ public class Addcompte {
 	public JFrame frmInscription;
 	private JTextField nomtxtfield;
 	private JTextField prenomtxtfield;
-	private JTextField statuttxtfield;
 	private JTextField usernametxtfield;
 	private JTextField passwordtxtfield;
+
+	Connection cnx = null;
+	PreparedStatement prepared = null;
+	ResultSet resultat = null;
 
 	/**
 	 * Launch the application.
@@ -152,11 +160,6 @@ public class Addcompte {
 		prenomtxtfield.setBounds(120, 102, 124, 30);
 		panel.add(prenomtxtfield);
 
-		statuttxtfield = new JTextField();
-		statuttxtfield.setColumns(10);
-		statuttxtfield.setBounds(120, 137, 124, 30);
-		panel.add(statuttxtfield);
-
 		usernametxtfield = new JTextField();
 		usernametxtfield.setColumns(10);
 		usernametxtfield.setBounds(404, 85, 124, 30);
@@ -167,14 +170,19 @@ public class Addcompte {
 		passwordtxtfield.setBounds(404, 147, 124, 30);
 		panel.add(passwordtxtfield);
 
+		JComboBox statuttxtfield = new JComboBox();
+		statuttxtfield.setModel(new DefaultComboBoxModel(new String[] { "", "Gerant", "Adherent" }));
+		statuttxtfield.setBounds(120, 137, 124, 30);
+		panel.add(statuttxtfield);
+
 		JButton btnajouter = new JButton("Confirmer les informations");
 		btnajouter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				String sql = "insert into Personnes values ('" + nomtxtfield.getText().toString() + "','"
 						+ prenomtxtfield.getText().toString() + "','" + usernametxtfield.getText().toString() + "','"
-						+ passwordtxtfield.getText().toString() + "'," + "'" + statuttxtfield.getText().toString()
-						+ "')";
+						+ passwordtxtfield.getText().toString() + "'," + "'"
+						+ statuttxtfield.getActionCommand().toString() + "')";
 
 				AccesJDBC.Edition(sql);
 
@@ -196,5 +204,6 @@ public class Addcompte {
 		lblNewLabel_3_1.setIcon(new ImageIcon("C:\\Users\\kadir\\Downloads\\library_icon_149727(1).png"));
 		lblNewLabel_3_1.setBounds(506, 11, 48, 45);
 		panel.add(lblNewLabel_3_1);
+
 	}
 }
