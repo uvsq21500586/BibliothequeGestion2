@@ -60,6 +60,8 @@ public class Menu {
 		sql = "Select Prenom from Personnes where id = " + idlogin;
 		String prenom = AccesJDBC.trouverNom(sql);
 		lblNewLabel.setText("Bienvenu " + nom + " " + prenom);
+		// ne pas oublier de mettre à jour les emprunts (pour les retards)
+		AccesJDBC.miseAJourEmprunts();
 	}
 
 	/**

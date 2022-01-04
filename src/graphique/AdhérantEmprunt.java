@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,6 +29,8 @@ public class AdhérantEmprunt {
 	public JFrame frmGestionemprunt;
 	private JTextField textField;
 	public static JTable table_docsempruntes;
+	public static boolean demandeReporter = false;
+	public static String idEmpruntReport;
 	private JComboBox<String> comboBoxIdDoc;
 	private JTextPane textPaneDescription;
 	private JCheckBox checkBoxstatut;
@@ -200,9 +203,34 @@ public class AdhérantEmprunt {
 		buttonfinEmprunt.setBounds(565, 277, 140, 21);
 		frmGestionemprunt.getContentPane().add(buttonfinEmprunt);
 
-		JButton btnNewButton = new JButton("Reporter");
-		btnNewButton.setBounds(746, 277, 131, 21);
-		frmGestionemprunt.getContentPane().add(btnNewButton);
+		JButton buttonReporter = new JButton("Reporter");
+		buttonReporter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (table_docsempruntes.getSelectedRow() > -1 && table_docsempruntes
+						.getValueAt(table_docsempruntes.getSelectedRow(), 3).toString().equals("valide")) {
+					idEmpruntReport = table_docsempruntes.getValueAt(table_docsempruntes.getSelectedRow(), 0)
+							.toString();
+					// message
+					demandeReporter = true;
+					JOptionPane.showMessageDialog(frmGestionemprunt,
+							"Demandez au gérant s'il est possible, au moyen d'un message, de reporter l'échéance.",
+							"Reporter l'échéance", JOptionPane.INFORMATION_MESSAGE);
+					NouveauMessage.idExpediteur = Menu.idLogin;
+					String sqlIdGerant = "Select id from Personnes where statut = 'Gerant'";
+					String sqlNomGerant = "Select Nom from Personnes where statut = 'Gerant'";
+					String sqlPrenomGerant = "Select Prenom from Personnes where statut = 'Gerant'";
+					NouveauMessage.idDestinataire = Integer.parseInt(AccesJDBC.trouverNom(sqlIdGerant));
+					NouveauMessage nouveaumessage = new NouveauMessage();
+					nouveaumessage.frame.setVisible(true);
+					nouveaumessage.txtdestinatairefield
+							.setText(AccesJDBC.trouverNom(sqlNomGerant) + " " + AccesJDBC.trouverNom(sqlPrenomGerant));
+					nouveaumessage.txtsujetfield.setText("Report emprunt id "
+							+ table_docsempruntes.getValueAt(table_docsempruntes.getSelectedRow(), 0));
+				}
+			}
+		});
+		buttonReporter.setBounds(746, 277, 131, 21);
+		frmGestionemprunt.getContentPane().add(buttonReporter);
 
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
@@ -226,7 +254,7 @@ public class AdhérantEmprunt {
 
 	public void afficherDocsEmprunts() {
 		// liste des documents empruntés par l'adhérent
-		String sql = "Select * from Emprunts where idPersonne = " + Menu.idLogin;
+		String sql = "Select * from Emprunts where idPersonne = " + Menu.idLogin + " and etatEmprunt <> 'rendu'";
 		if (checkBoxstatut.isSelected() && !checkBoxfindateemprunt.isSelected()) {
 			sql = sql + " order by etatEmprunt";
 		} else if (!checkBoxstatut.isSelected() && checkBoxfindateemprunt.isSelected()) {

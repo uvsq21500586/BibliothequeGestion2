@@ -27,8 +27,8 @@ public class NouveauMessage {
 	public JFrame frame;
 	public static int idExpediteur;
 	public static int idDestinataire;
-	private JTextField txtsujetfield;
-	private JTextField txtdestinatairefield;
+	public JTextField txtsujetfield;
+	public JTextField txtdestinatairefield;
 	private JTextField txtexpediteurfield;
 	private JTextField txtdatefield;
 	Connection cnx = null;
@@ -55,6 +55,19 @@ public class NouveauMessage {
 	 * Create the application.
 	 */
 	public NouveauMessage() {
+		initialize();
+		System.out.println(AdhérantEmprunt.demandeReporter);
+		// String dateEnvoi = Operation.dateFormat(new Date());
+		txtdatefield.setText(Operation.dateFormat(new Date()));
+		String sqlNomExpediteur = "select Nom from Personnes where id = " + idExpediteur;
+		String sqlPrenomExpediteur = "select Prenom from Personnes where id = " + idExpediteur;
+		txtexpediteurfield
+				.setText(AccesJDBC.trouverNom(sqlNomExpediteur) + " " + AccesJDBC.trouverNom(sqlPrenomExpediteur));
+	}
+
+	public NouveauMessage(int idexpediteur, int iddestinataire) {
+		idExpediteur = idexpediteur;
+		idDestinataire = iddestinataire;
 		initialize();
 		// String dateEnvoi = Operation.dateFormat(new Date());
 		txtdatefield.setText(Operation.dateFormat(new Date()));
@@ -87,6 +100,7 @@ public class NouveauMessage {
 		JButton btnCancelMsg = new JButton("ANNULER");
 		btnCancelMsg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				AdhérantEmprunt.demandeReporter = false;
 				frame.dispose();
 			}
 		});
@@ -141,7 +155,12 @@ public class NouveauMessage {
 						+ textAreaMsg.getText().toString() + "',0)";
 				System.out.println(sql);
 				AccesJDBC.Edition(sql);
-
+				if (AdhérantEmprunt.demandeReporter) {
+					String sqlmodifEmprunt = "update Emprunts set etatEmprunt = 'encoursajourné' where id = "
+							+ AdhérantEmprunt.idEmpruntReport;
+					AccesJDBC.Edition(sqlmodifEmprunt);
+				}
+				AdhérantEmprunt.demandeReporter = false;
 				JOptionPane.showMessageDialog(null, "Message Envoyé");
 
 			}

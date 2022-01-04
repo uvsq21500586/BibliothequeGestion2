@@ -53,7 +53,6 @@ public class Emprunt {
 		initialize();
 		initChoixEmpruntsNonValidesAjourne();
 		initChoixEmpruntsRetours();
-
 	}
 
 	/**
@@ -77,90 +76,91 @@ public class Emprunt {
 		lblRetourDesDocuments.setBounds(416, 11, 288, 43);
 		GESTON_EMPRUNTS.getContentPane().add(lblRetourDesDocuments);
 
-		JPanel panel = new JPanel();
-		panel.setBackground(new Color(240, 230, 140));
-		panel.setBorder(
+		JPanel panelValidation = new JPanel();
+		panelValidation.setBackground(new Color(240, 230, 140));
+		panelValidation.setBorder(
 				new TitledBorder(null, "Validation d'un emprunt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(31, 65, 336, 219);
-		GESTON_EMPRUNTS.getContentPane().add(panel);
-		panel.setLayout(null);
+		panelValidation.setBounds(31, 65, 336, 219);
+		GESTON_EMPRUNTS.getContentPane().add(panelValidation);
+		panelValidation.setLayout(null);
 
 		buttonValider1 = new JButton("Valider");
 
 		buttonValider1.setBounds(10, 188, 75, 21);
-		panel.add(buttonValider1);
+		panelValidation.add(buttonValider1);
 
 		comboBoxEmpruntsnonValidesAjourne = new JComboBox<String>();
 
 		comboBoxEmpruntsnonValidesAjourne.setBounds(172, 24, 111, 22);
-		panel.add(comboBoxEmpruntsnonValidesAjourne);
+		panelValidation.add(comboBoxEmpruntsnonValidesAjourne);
 
 		JLabel labelAdherentEmprunt = new JLabel("Adh\u00E9rent:");
 		labelAdherentEmprunt.setBounds(10, 65, 273, 14);
-		panel.add(labelAdherentEmprunt);
+		panelValidation.add(labelAdherentEmprunt);
 
 		JLabel labelDocemprunt = new JLabel("Emprunt \u00E0 valider ou ajourner: ");
 		labelDocemprunt.setBounds(10, 28, 159, 14);
-		panel.add(labelDocemprunt);
+		panelValidation.add(labelDocemprunt);
 
 		JLabel labelTitreDocEmprunt = new JLabel("Titre du document: ");
 		labelTitreDocEmprunt.setBounds(10, 100, 273, 13);
-		panel.add(labelTitreDocEmprunt);
+		panelValidation.add(labelTitreDocEmprunt);
 
 		JLabel labelDateLimite = new JLabel("Date limite d'emprunt:");
 		labelDateLimite.setBounds(10, 127, 131, 13);
-		panel.add(labelDateLimite);
+		panelValidation.add(labelDateLimite);
 
 		textFieldDateLimite = new JTextField();
 		textFieldDateLimite.setBounds(169, 123, 96, 19);
-		panel.add(textFieldDateLimite);
+		panelValidation.add(textFieldDateLimite);
 		textFieldDateLimite.setColumns(10);
 
 		JLabel labelFormatDate = new JLabel("(format: dd/mm/aa)");
 		labelFormatDate.setForeground(Color.RED);
 		labelFormatDate.setBounds(10, 141, 117, 13);
-		panel.add(labelFormatDate);
+		panelValidation.add(labelFormatDate);
 
 		buttonAjourner = new JButton("Ajourner");
-		buttonAjourner.setBounds(241, 188, 85, 21);
-		panel.add(buttonAjourner);
 
-		JPanel panel_1 = new JPanel();
-		panel_1.setBorder(
+		buttonAjourner.setBounds(241, 188, 85, 21);
+		panelValidation.add(buttonAjourner);
+
+		JPanel panelRetour = new JPanel();
+		panelRetour.setBorder(
 				new TitledBorder(null, "Retour d'emprunt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBackground(new Color(240, 230, 140));
-		panel_1.setBounds(416, 65, 308, 219);
-		GESTON_EMPRUNTS.getContentPane().add(panel_1);
-		panel_1.setLayout(null);
+		panelRetour.setBackground(new Color(240, 230, 140));
+		panelRetour.setBounds(416, 65, 308, 219);
+		GESTON_EMPRUNTS.getContentPane().add(panelRetour);
+		panelRetour.setLayout(null);
 
 		comboBoxRetourEmprunt = new JComboBox<String>();
 		comboBoxRetourEmprunt.setBounds(137, 22, 122, 21);
-		panel_1.add(comboBoxRetourEmprunt);
+		panelRetour.add(comboBoxRetourEmprunt);
 
 		JLabel labelAherent2 = new JLabel("Adh\u00E9rent : ");
 		labelAherent2.setBounds(22, 62, 237, 14);
-		panel_1.add(labelAherent2);
+		panelRetour.add(labelAherent2);
 
 		buttonValider2 = new JButton("Valider");
 
 		buttonValider2.setBounds(10, 186, 89, 23);
-		panel_1.add(buttonValider2);
+		panelRetour.add(buttonValider2);
 
 		JLabel labelEmpruntRetour = new JLabel("Retour d'emprunt");
 		labelEmpruntRetour.setBounds(22, 25, 105, 14);
-		panel_1.add(labelEmpruntRetour);
+		panelRetour.add(labelEmpruntRetour);
 
 		buttonRetard = new JButton("Alerter");
 		buttonRetard.setBounds(213, 187, 85, 21);
-		panel_1.add(buttonRetard);
+		panelRetour.add(buttonRetard);
 
 		JLabel labelTitreDocEmprunt2 = new JLabel("Titre du document : ");
 		labelTitreDocEmprunt2.setBounds(22, 94, 237, 13);
-		panel_1.add(labelTitreDocEmprunt2);
+		panelRetour.add(labelTitreDocEmprunt2);
 
 		JLabel labelEtat = new JLabel("Etat de l'emprunt: ");
 		labelEtat.setBounds(22, 132, 237, 13);
-		panel_1.add(labelEtat);
+		panelRetour.add(labelEtat);
 
 		JButton btnNewButton_2 = new JButton("Requetes");
 		btnNewButton_2.setBounds(278, 294, 89, 23);
@@ -198,6 +198,15 @@ public class Emprunt {
 					labelAdherentEmprunt.setText("Adhérent : " + AccesJDBC.trouverNom(sqlnomadherent) + " "
 							+ AccesJDBC.trouverNom(sqlprenomadherent));
 					labelTitreDocEmprunt.setText("Titre du document: " + AccesJDBC.trouverNom(sqlTitredoc));
+					String sqlEtatEmprunt = "select etatEmprunt from Emprunts where id = "
+							+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
+					if (AccesJDBC.trouverNom(sqlEtatEmprunt).equals("valide")) {
+						buttonValider1.setEnabled(false);
+						buttonAjourner.setEnabled(true);
+					} else {
+						buttonValider1.setEnabled(true);
+						buttonAjourner.setEnabled(false);
+					}
 				}
 			}
 		});
@@ -260,6 +269,20 @@ public class Emprunt {
 				}
 			}
 		});
+		buttonAjourner.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null
+						&& GestionErreurs.formatDate(textFieldDateLimite.getText())) {
+					String query = "update Emprunts set etatEmprunt = 'ajourne', dateRelance = '"
+							+ textFieldDateLimite.getText() + "' where id = "
+							+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
+					AccesJDBC.Edition(query);
+					// mise à jour de la liste des emprunts à valider
+					initChoixEmpruntsNonValidesAjourne();
+				}
+
+			}
+		});
 		buttonValider2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// document rendu
@@ -293,17 +316,23 @@ public class Emprunt {
 		// liste des emprunts non validés par le gérant
 		String query = "select id from Emprunts where etatEmprunt = 'encoursvalidation' or etatEmprunt = 'encoursajourné'";
 		AccesJDBC.listeChoix(query, comboBoxEmpruntsnonValidesAjourne);
-		if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null
-				&& AccesJDBC.trouverNom(comboBoxEmpruntsnonValidesAjourne.getSelectedItem().toString())
-						.equals("encoursvalidation")) {
-			buttonValider1.setEnabled(true);
-			buttonAjourner.setEnabled(false);
-		} else if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null) {
-			buttonValider1.setEnabled(false);
-			buttonAjourner.setEnabled(true);
-		} else {
-			buttonAjourner.setEnabled(false);
-			buttonValider1.setEnabled(false);
+		if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null) {
+			String query2 = "select etatEmprunt from Emprunts where id = "
+					+ comboBoxEmpruntsnonValidesAjourne.getSelectedItem();
+			System.out.println("selectedItem: " + AccesJDBC.trouverNom(query2));
+			if (AccesJDBC.trouverNom(query2).equals("encoursvalidation")) {
+				System.out.println("cas1");
+				buttonValider1.setEnabled(true);
+				buttonAjourner.setEnabled(false);
+			} else if (comboBoxEmpruntsnonValidesAjourne.getSelectedItem() != null) {
+				System.out.println("cas2");
+				buttonValider1.setEnabled(false);
+				buttonAjourner.setEnabled(true);
+			} else {
+				System.out.println("cas3");
+				buttonAjourner.setEnabled(false);
+				buttonValider1.setEnabled(false);
+			}
 		}
 	}
 
