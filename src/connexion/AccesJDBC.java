@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -13,8 +14,10 @@ import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 import graphique.AdhérantEmprunt;
+import graphique.AjoutDoc;
 import graphique.Catalogue;
 import net.proteanit.sql.DbUtils;
+import operations.Operation;
 
 public class AccesJDBC {
 	public static Connection con;
@@ -64,6 +67,68 @@ public class AccesJDBC {
 				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
 				Catalogue.tableDocuments.setModel(model);
 				Catalogue.tableDocumentsVide = true;
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+		}
+
+	}
+
+	public static void afficherAuteurs(String query, AjoutDoc Afficher) {
+		// utilisé pour la fenêtre AjoutDoc
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				Afficher.tableAuteurs.setModel(DbUtils.resultSetToTableModel(rs));
+
+			} else {
+				// tableau vide
+				String tabColumn[] = new String[rsmd.getColumnCount()];
+				for (int i = 0; i < rsmd.getColumnCount(); i++) {
+					tabColumn[i] = rsmd.getColumnName(i + 1);
+				}
+				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
+				Afficher.tableAuteurs.setModel(model);
+
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Aucun document");
+		}
+
+	}
+
+	public static void afficherEditeurs(String query, AjoutDoc Afficher) {
+		// utilisé pour la fenêtre AjoutDoc
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				Afficher.tableEditeurs.setModel(DbUtils.resultSetToTableModel(rs));
+
+			} else {
+				// tableau vide
+				String tabColumn[] = new String[rsmd.getColumnCount()];
+				for (int i = 0; i < rsmd.getColumnCount(); i++) {
+					tabColumn[i] = rsmd.getColumnName(i + 1);
+				}
+				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
+				Afficher.tableEditeurs.setModel(model);
+
 			}
 
 		} catch (SQLException e1) {
@@ -267,6 +332,26 @@ public class AccesJDBC {
 			return null;
 		}
 
+	}
+
+	public static void miseAJourEmprunts() {
+		String sql = "update Emprunts set etatEmprunt = 'perime'";
+		String dateString = Operation.dateFormat(new Date());
+		sql = sql + " where etatEmprunt <> 'rendu' and etatEmprunt <> 'ajourne' and dateLimite < '" + dateString + "'";
+		try {
+			stm.executeQuery(sql);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		sql = "update Emprunts set etatEmprunt = 'perime'";
+		sql = sql + " where etatEmprunt = 'ajourne' and dateRelance < '" + dateString + "'";
+		try {
+			stm.executeQuery(sql);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
 }
