@@ -181,8 +181,7 @@ public class Addcompte {
 
 				String sql = "insert into Personnes values ('" + nomtxtfield.getText().toString() + "','"
 						+ prenomtxtfield.getText().toString() + "','" + usernametxtfield.getText().toString() + "','"
-						+ passwordtxtfield.getText().toString() + "'," + "'"
-						+ statuttxtfield.getActionCommand().toString() + "')";
+						+ passwordtxtfield.getText().toString() + "'," + "'" + statuttxtfield.getSelectedItem() + "')";
 
 				AccesJDBC.Edition(sql);
 

@@ -147,6 +147,7 @@ public class Authentification {
 					int idlogin = Integer.parseInt(AccesJDBC.trouverNom(sql));
 					Menu window = new Menu(statutlogin, idlogin);
 					window.frameMenu.setVisible(true);
+					frame.dispose();
 
 				}
 

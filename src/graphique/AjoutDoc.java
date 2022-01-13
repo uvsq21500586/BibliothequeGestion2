@@ -352,6 +352,11 @@ public class AjoutDoc {
 		panel.add(comboBoxThemes);
 
 		JButton buttonRetour = new JButton("Retour");
+		buttonRetour.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
 		buttonRetour.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		buttonRetour.setBounds(776, 10, 450, 62);
 		frame.getContentPane().add(buttonRetour);
@@ -379,8 +384,10 @@ public class AjoutDoc {
 
 	public void ajouter() {
 		if ((dateEdition.getText().equals("") || GestionErreurs.formatDate2(dateEdition.getText(), frame))
-				&& GestionErreurs.titreDocument(titre.getText())) {
+				&& GestionErreurs.titreDocument(titre.getText())
+				&& (adresse.getText().equals("") || GestionErreurs.formatMail(adresse.getText(), frame))) {
 			try {
+				int nouveaudoc = 1;
 				int idauteur = -1;
 				int idediteur = -1;
 				if (tableAuteurs.getSelectedRow() > -1) {
@@ -408,65 +415,78 @@ public class AjoutDoc {
 				}
 				if (tableEditeurs.getSelectedRow() == -1 && !nomEditeur.getText().equals("")) {
 					// nouvel editeur
-					String sql2 = "insert into Editeurs(nom,prenom,adresse,siteWeb,telephone) values ('" + nom.getText()
-							+ "','" + prenom.getText() + "','" + adresse.getText().toString() + "','"
-							+ siteWeb.getText().toString() + "','" + telephone.getText().toString() + "')";
+
+					if (nomEditeur.getText().equals("") || prenomEditeur.getText().equals("")) {
+						// nouvel éditeur mal renseigné
+						JOptionPane.showMessageDialog(AjoutDoc.frame,
+								"Vous devez au moins renseigner le nom et le prénom du nouvel éditeur ou sélectionner un éditeur existant.",
+								"Erreur éditeur", JOptionPane.ERROR_MESSAGE);
+						nouveaudoc = 0;
+					}
+					String sql2 = "insert into Editeurs(nom,prenom,adresse,siteWeb,telephone) values ('"
+							+ nomEditeur.getText() + "','" + prenomEditeur.getText() + "','"
+							+ adresse.getText().toString() + "','" + siteWeb.getText().toString() + "','"
+							+ telephone.getText().toString() + "')";
 					AccesJDBC.Edition(sql2);
 				}
-				if (idediteur == -1 && nomEditeur.getText().equals("")) {
-					String sql1 = "insert into Documents (titre,soustitre,dateEdition,codeReference,typeDocument,isEmprunte) values ('"
-							+ titre.getText().toString() + "','" + sousTitre.getText().toString() + "','"
-							+ dateEdition.getText().toString() + "','" + codeReference.getText().toString() + "','"
-							+ comboBoxTypeDoc.getSelectedItem() + "',0)";
-					System.out.println("sql1: " + sql1);
-					AccesJDBC.Edition(sql1);
-				} else {
-					String sql1 = "insert into Documents (titre,soustitre,dateEdition,codeReference,typeDocument,idEditeur,isEmprunte) values ('"
-							+ titre.getText().toString() + "','" + sousTitre.getText().toString() + "','"
-							+ dateEdition.getText().toString() + "','" + codeReference.getText().toString() + "','"
-							+ comboBoxTypeDoc.getSelectedItem() + "'," + idediteur + ",0)";
-					System.out.println("sql1: " + sql1);
-					AccesJDBC.Edition(sql1);
-				}
-				// recherche id du nouveau document
-				String sqlIdNouveaudoc = "select id from Documents where titre = '" + titre.getText().toString() + "'";
-				if (!sousTitre.getText().toString().equals("")) {
-					sqlIdNouveaudoc = sqlIdNouveaudoc + " and soustitre = '" + sousTitre.getText() + "'";
-				}
-				if (!dateEdition.getText().toString().equals("")) {
-					sqlIdNouveaudoc = sqlIdNouveaudoc + " and dateEdition = '" + dateEdition.getText() + "'";
-				}
-				if (!codeReference.getText().toString().equals("")) {
-					sqlIdNouveaudoc = sqlIdNouveaudoc + " and codeReference = '" + codeReference.getText() + "'";
-				}
-				sqlIdNouveaudoc = sqlIdNouveaudoc + " and typeDocument = '" + comboBoxTypeDoc.getSelectedItem() + "'";
-				String iddoc = AccesJDBC.trouverNom(sqlIdNouveaudoc);
+				if (nouveaudoc > 0) {
+					if (idediteur == -1 && nomEditeur.getText().equals("")) {
+						String sql1 = "insert into Documents (titre,soustitre,dateEdition,codeReference,typeDocument,isEmprunte) values ('"
+								+ titre.getText().toString() + "','" + sousTitre.getText().toString() + "','"
+								+ dateEdition.getText().toString() + "','" + codeReference.getText().toString() + "','"
+								+ comboBoxTypeDoc.getSelectedItem() + "',0)";
+						System.out.println("sql1: " + sql1);
+						AccesJDBC.Edition(sql1);
+					} else {
+						String sql1 = "insert into Documents (titre,soustitre,dateEdition,codeReference,typeDocument,idEditeur,isEmprunte) values ('"
+								+ titre.getText().toString() + "','" + sousTitre.getText().toString() + "','"
+								+ dateEdition.getText().toString() + "','" + codeReference.getText().toString() + "','"
+								+ comboBoxTypeDoc.getSelectedItem() + "'," + idediteur + ",0)";
+						System.out.println("sql1: " + sql1);
+						AccesJDBC.Edition(sql1);
+					}
+					// recherche id du nouveau document
+					String sqlIdNouveaudoc = "select id from Documents where titre = '" + titre.getText().toString()
+							+ "'";
+					if (!sousTitre.getText().toString().equals("")) {
+						sqlIdNouveaudoc = sqlIdNouveaudoc + " and soustitre = '" + sousTitre.getText() + "'";
+					}
+					if (!dateEdition.getText().toString().equals("")) {
+						sqlIdNouveaudoc = sqlIdNouveaudoc + " and dateEdition = '" + dateEdition.getText() + "'";
+					}
+					if (!codeReference.getText().toString().equals("")) {
+						sqlIdNouveaudoc = sqlIdNouveaudoc + " and codeReference = '" + codeReference.getText() + "'";
+					}
+					sqlIdNouveaudoc = sqlIdNouveaudoc + " and typeDocument = '" + comboBoxTypeDoc.getSelectedItem()
+							+ "'";
+					String iddoc = AccesJDBC.trouverNom(sqlIdNouveaudoc);
 
-				// thème
-				if (checkBoxNouveauTheme.isSelected()) {
-					String sql3 = "insert into Themes (nom) values ('" + themeNouveau.getText() + "')";
-					AccesJDBC.Edition(sql3);
-					String sqltheme = "select id from Themes where nom = '" + themeNouveau.getText() + "'";
-					System.out.println("sqltheme: " + sqltheme);
-					sql3 = "insert into DocumentTheme values(" + iddoc + "," + AccesJDBC.trouverNom(sqltheme) + ")";
-					System.out.println("sql3: " + sql3);
-					AccesJDBC.Edition(sql3);
-				} else {
-					String sqltheme = "Select id from Themes where nom = '" + comboBoxThemes.getSelectedItem() + "'";
-					String sql3 = "insert into DocumentTheme values(" + iddoc + "," + AccesJDBC.trouverNom(sqltheme)
-							+ ")";
-					System.out.println("sql3: " + sql3);
-					AccesJDBC.Edition(sql3);
-				}
+					// thème
+					if (checkBoxNouveauTheme.isSelected()) {
+						String sql3 = "insert into Themes (nom) values ('" + themeNouveau.getText() + "')";
+						AccesJDBC.Edition(sql3);
+						String sqltheme = "select id from Themes where nom = '" + themeNouveau.getText() + "'";
+						System.out.println("sqltheme: " + sqltheme);
+						sql3 = "insert into DocumentTheme values(" + iddoc + "," + AccesJDBC.trouverNom(sqltheme) + ")";
+						System.out.println("sql3: " + sql3);
+						AccesJDBC.Edition(sql3);
+					} else {
+						String sqltheme = "Select id from Themes where nom = '" + comboBoxThemes.getSelectedItem()
+								+ "'";
+						String sql3 = "insert into DocumentTheme values(" + iddoc + "," + AccesJDBC.trouverNom(sqltheme)
+								+ ")";
+						System.out.println("sql3: " + sql3);
+						AccesJDBC.Edition(sql3);
+					}
 
-				// lien Document-auteur
-				if (idauteur > -1 && !nom.getText().equals("")) {
-					String sql4 = "insert into DocumentsAuteurs values (" + iddoc + "," + idauteur + ")";
-					AccesJDBC.Edition(sql4);
+					// lien Document-auteur
+					if (idauteur > -1 && !nom.getText().equals("")) {
+						String sql4 = "insert into DocumentsAuteurs values (" + iddoc + "," + idauteur + ")";
+						AccesJDBC.Edition(sql4);
+					}
+					afficherAuteurs();
+					afficherEditeurs();
 				}
-				afficherAuteurs();
-				afficherEditeurs();
-
 			}
 
 			catch (Exception e1) {

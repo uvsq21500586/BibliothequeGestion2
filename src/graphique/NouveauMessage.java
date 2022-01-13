@@ -162,7 +162,7 @@ public class NouveauMessage {
 				}
 				AdhérantEmprunt.demandeReporter = false;
 				JOptionPane.showMessageDialog(null, "Message Envoyé");
-
+				frame.dispose();
 			}
 		});
 

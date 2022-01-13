@@ -80,6 +80,33 @@ public class GestionErreurs {
 		return true;
 	}
 
+	public static boolean formatDate3(String dateString, JFrame frame) {
+		// accepte le champ vide
+		if (dateString.equals("")) {
+			return true;
+		}
+		// vérifier que la date est écrite sous la forme dd/mm/aa
+		if (dateString.length() != 10) {
+			JOptionPane.showMessageDialog(frame, "La date doit être de la forme dd/mm/yyyy.", "Erreur format date",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (!(Character.isDigit(dateString.charAt(0)) || Character.isDigit(dateString.charAt(1))
+				|| Character.isDigit(dateString.charAt(3)) || Character.isDigit(dateString.charAt(4))
+				|| Character.isDigit(dateString.charAt(6)) || Character.isDigit(dateString.charAt(7))
+				|| Character.isDigit(dateString.charAt(8)) || Character.isDigit(dateString.charAt(9)))) {
+			JOptionPane.showMessageDialog(frame, "La date doit être de la forme dd/mm/yyyy.", "Erreur format date",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (dateString.charAt(2) != '/' || dateString.charAt(5) != '/') {
+			JOptionPane.showMessageDialog(frame, "La date doit être de la forme dd/mm/yyyy.", "Erreur format date",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
 	public static boolean titreDocument(String champtitre) {
 		if (champtitre.equals("")) {
 
@@ -88,6 +115,18 @@ public class GestionErreurs {
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean formatMail(String mailString, JFrame frame) {
+		if (mailString.equals("")) {
+			return true;
+		}
+		if (mailString.contains("@")) {
+			return true;
+		}
+		JOptionPane.showMessageDialog(frame, "Le mail doit contenir au moins '@'.", "Erreur format mail",
+				JOptionPane.ERROR_MESSAGE);
+		return false;
 	}
 
 }

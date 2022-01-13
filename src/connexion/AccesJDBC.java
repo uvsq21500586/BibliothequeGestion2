@@ -79,6 +79,62 @@ public class AccesJDBC {
 
 	}
 
+	public static void AfficherTableMessages(String query, JTable Tablelistemessages) {
+
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				Tablelistemessages.setModel(DbUtils.resultSetToTableModel(rs));
+			} else {
+				// tableau vide
+				String tabColumn[] = new String[rsmd.getColumnCount()];
+				for (int i = 0; i < rsmd.getColumnCount(); i++) {
+					tabColumn[i] = rsmd.getColumnName(i + 1);
+				}
+				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
+				Tablelistemessages.setModel(model);
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Neant");
+		}
+	}
+
+	public static void AfficherTablePersonnes(String query, JTable Tablelistemessages) {
+
+		try {
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+
+			if (rs.next()) {
+				rs = stm.executeQuery(query);
+				Tablelistemessages.setModel(DbUtils.resultSetToTableModel(rs));
+			} else {
+				// tableau vide
+				String tabColumn[] = new String[rsmd.getColumnCount()];
+				for (int i = 0; i < rsmd.getColumnCount(); i++) {
+					tabColumn[i] = rsmd.getColumnName(i + 1);
+				}
+				DefaultTableModel model = new DefaultTableModel(tabColumn, 0);
+				Tablelistemessages.setModel(model);
+			}
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+
+			e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			System.out.println("Neant");
+		}
+	}
+
 	public static void afficherAuteurs(String query, AjoutDoc Afficher) {
 		// utilisé pour la fenêtre AjoutDoc
 		try {

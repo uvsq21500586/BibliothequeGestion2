@@ -95,7 +95,7 @@ public class Menu {
 		JButton buttonMessages = new JButton("Messages");
 		buttonMessages.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Messagerie me = new Messagerie();
+				Messagerie me = new Messagerie(idLogin);
 				me.frameMessagerie.setVisible(true);
 
 			}
@@ -169,15 +169,15 @@ public class Menu {
 		buttonGestionLogins.setBounds(20, 22, 185, 21);
 		panelGerant.add(buttonGestionLogins);
 
-		JButton buttonGestionDocuments = new JButton("Gestion des documents");
-		buttonGestionDocuments.addActionListener(new ActionListener() {
+		JButton buttonAjoutDocuments = new JButton("Ajout des documents");
+		buttonAjoutDocuments.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AjoutDoc fenetreGerant = new AjoutDoc();
 				fenetreGerant.frame.setVisible(true);
 			}
 		});
-		buttonGestionDocuments.setBounds(20, 62, 185, 21);
-		panelGerant.add(buttonGestionDocuments);
+		buttonAjoutDocuments.setBounds(20, 62, 185, 21);
+		panelGerant.add(buttonAjoutDocuments);
 		frameMenu.setTitle("Menu");
 		frameMenu.setBounds(100, 100, 450, 300);
 		frameMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -142,7 +142,7 @@ public class Statistiques {
 
 		JLabel lblNewLabel = new JLabel("Date fin :");
 		lblNewLabel.setForeground(new Color(255, 255, 255));
-		lblNewLabel.setBounds(268, 22, 45, 13);
+		lblNewLabel.setBounds(268, 22, 60, 13);
 		panel.add(lblNewLabel);
 
 		textFieldDateDebut = new JTextField();
